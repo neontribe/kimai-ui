@@ -12,41 +12,30 @@ import java.io.IOException;
 
 public class ConfigPanel extends JPanel implements ActionListener {
 
-    JTextField uri;
-    JTextField username;
-    JTextField password;
-
-    public ConfigPanel() {
-        this(new Settings());
-    }
+    private final JTextField uri;
+    private final JTextField username;
+    private final JTextField password;
 
     public ConfigPanel(Settings settings) {
         this.setLayout(new BorderLayout(5,5));
         this.setBorder(new EmptyBorder(5,5,5,5));
-        // Set layout (pst grid layout)
+
         JPanel gridRight = new JPanel(new GridLayout(0,1, 5,5));
+        gridRight.add(uri = new JTextField(settings.getKimaiUri(), 30));
+        gridRight.add(username = new JTextField(settings.getKimaiUsername(), 30));
+        gridRight.add(password = new JTextField(settings.getKimaiPassword(), 30));
         this.add(gridRight, BorderLayout.CENTER);
-        // Add label and text field for kimaiUri
-
-        gridRight.add(uri = new JTextField(50));
-        // Add label and text field for kimaiUsername
-
-        gridRight.add(username = new JTextField(50));
-        // Add label and text field for kimaiPassword
-
-        gridRight.add(password = new JTextField(50));
-        // Add a save button
-        JButton save = new JButton("Save");
-        this.add(save, BorderLayout.SOUTH);
-        save.addActionListener(this);
-        // ?? How could we centre the save button.
-        // GridBagLayout or nested panels and layouts
 
         JPanel gridLeft = new JPanel(new GridLayout(0,1,5,5));
         gridLeft.add(new JLabel("Your Kimai Uri:"));
         gridLeft.add(new JLabel("Username:"));
         gridLeft.add(new JLabel("Password:"));
         this.add(gridLeft, BorderLayout.WEST);
+
+        JButton save = new JButton("Save");
+        this.add(save, BorderLayout.SOUTH);
+        save.addActionListener(this);
+
     }
 
     @Override
@@ -56,9 +45,28 @@ public class ConfigPanel extends JPanel implements ActionListener {
             settings.setKimaiUri(this.uri.getText());
             settings.setKimaiUsername(this.username.getText());
             settings.setKimaiPassword(this.password.getText());
-            Settings.save(settings);
+            if (Settings.save(settings)) {
+                frame.setVisible(false);
+            }
         } catch (Exception ex) {
             System.err.println("Unreachable");
         }
     }
+
+    private static JFrame frame;
+
+    public static JFrame makeFrame(Settings settings) {
+        if (frame != null) {
+            return frame;
+        }
+        JPanel config = new ConfigPanel(settings);
+        frame = new JFrame("Config");
+        frame.add(config);
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+
+        return frame;
+    }
+
 }

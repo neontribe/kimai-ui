@@ -1,11 +1,11 @@
 package uk.co.neontribe.kimai.config;
 
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
-import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -42,10 +42,7 @@ public class Settings {
             return Settings.kimaiSettings;
         }
 
-        // Get the user home save and create a File object that points to the config dire
-        String home = System.getProperty("user.home");
-        File settingsDir = new File(home, CONFIG_DIR);
-
+        File settingsDir = Settings.getConfigDir();
         // If the config dir does not exist then create it or fail.
         if (!settingsDir.exists()) {
             if (!settingsDir.mkdirs()) {
@@ -54,7 +51,7 @@ public class Settings {
         }
 
         // If the config file does not exist throw a ConfigNotInitialisedException error, this can be caught and handled
-        File settingsFile = new File(settingsDir, CONFIG_FILENAME);
+        File settingsFile = Settings.getConfigFile();
         if (!settingsFile.exists()) {
             throw new ConfigNotInitialisedException();
         }
@@ -64,20 +61,50 @@ public class Settings {
         InputStream inputStream = Files.newInputStream(settingsFile.toPath());
         Map<String, Object> data = yaml.load(inputStream);
 
+        if (data == null) {
+            Settings.kimaiSettings = new Settings();
+            return Settings.kimaiSettings;
+        }
+
         // Create a new settings object and stash it in out static context
         Settings.kimaiSettings = new Settings();
+
         Settings.kimaiSettings.setKimaiUri((String) data.getOrDefault("kimaiUri", ""));
         Settings.kimaiSettings.setKimaiUsername((String) data.getOrDefault("kimaiUsername", ""));
         Settings.kimaiSettings.setKimaiPassword((String) data.getOrDefault("kimaiPassword", ""));
+
+        Object rawCustomers = data.get("customers");
+        if (rawCustomers instanceof ArrayList<?>) {
+            ArrayList<String> customers = (ArrayList<String>)rawCustomers;
+            Settings.kimaiSettings.setCustomers(customers.toArray(new String[0]));
+        }
 
         // return the static instance of settings
         return Settings.kimaiSettings;
     }
 
+    /**
+     * Get the user home and create a File object that points to the config dir
+     * @return File The config dir
+     */
+    public static File getConfigDir() {
+        String home = System.getProperty("user.home");
+        return new File(home, CONFIG_DIR);
+    }
+
+    /**
+     * Get the user home and create a File object that points to the config dir
+     * @return File The config dir
+     */
+    public static File getConfigFile() {
+        return new File(Settings.getConfigDir(), CONFIG_FILENAME);
+    }
+
     // Instance fields
-    private String kimaiUri;
-    private String kimaiUsername;
-    private String kimaiPassword;
+    private String kimaiUri = "";
+    private String kimaiUsername = "";
+    private String kimaiPassword = "";
+    private String[] customers = {};
 
     public String getKimaiUri() {
         return kimaiUri;
@@ -103,19 +130,27 @@ public class Settings {
         this.kimaiPassword = kimaiPassword;
     }
 
-    public static void save(Settings settings) throws FileNotFoundException, SecurityException {
-        Map<String, Object> data = new LinkedHashMap<String, Object>();
-        data.put("kimaiUri", settings.getKimaiUri());
-        data.put("kimaiUsername", settings.getKimaiUsername());
-        data.put("kimaiPassword", settings.getKimaiPassword());
+    public String[] getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(String[] customers) {
+        this.customers = customers;
+    }
+
+    public static boolean save(Settings settings) throws FileNotFoundException, SecurityException {
+        Map<String, Object> kimai = new HashMap<String, Object>();
+        kimai.put("kimaiUri", settings.getKimaiUri());
+        kimai.put("kimaiUsername", settings.getKimaiUsername());
+        kimai.put("kimaiPassword", settings.getKimaiPassword());
+        kimai.put("customers", settings.getCustomers());
+
         Yaml yaml = new Yaml();
-        StringWriter stringWriter = new StringWriter();
-        yaml.dump(data, stringWriter);
-        String home = System.getProperty("user.home");
-        File settingsDir = new File(home, CONFIG_DIR);
-        PrintWriter fileOutputStream = new PrintWriter(new File(settingsDir, CONFIG_FILENAME));
-        fileOutputStream.println(stringWriter);
-        fileOutputStream.flush();
-        fileOutputStream.close();
+        PrintWriter writer = new PrintWriter(Settings.getConfigFile());
+        yaml.dump(kimai, writer);
+        writer.flush();
+        writer.close();
+
+        return true;
     }
 }

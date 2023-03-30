@@ -25,7 +25,7 @@ mvn install
              +- desktop
 ```
 
-## Local Kimai 
+## Local Kimai
 
 Start a local kimai instance to dev against:
 
@@ -41,8 +41,9 @@ For now, we want to pre-configure the system.
 
 ```bash
 cat <<EOF > ~/.config/neontribe/kimai-ui/config.yml
-kimaiUri: http://localhost:8001
-kimaiUsername: superadmin
-kimaiPassword: changemeplease
+kimai:
+  uri: http://localhost:8001
+  uername: superadmin
+  password: changemeplease
 EOF
 ```
