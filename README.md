@@ -24,3 +24,25 @@ mvn install
              +- core
              +- desktop
 ```
+
+## Local Kimai 
+
+Start a local kimai instance to dev against:
+
+```bash
+git clone git@github.com:tobybatch/kimai2.git
+cd kimai2
+docker-compose up -d
+```
+
+## Config
+
+For now, we want to pre-configure the system.
+
+```bash
+cat <<EOF > ~/.config/neontribe/kimai-ui/config.yml
+kimaiUri: http://localhost:8001
+kimaiUsername: superadmin
+kimaiPassword: changemeplease
+EOF
+```
