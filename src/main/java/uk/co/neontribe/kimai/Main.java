@@ -30,6 +30,7 @@ public class Main {
         } catch (ConfigNotInitialisedException e) {
             JFrame config = new JFrame("Config");
             config.add(new ConfigPanel());
+            config.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
             config.pack();
             config.setLocationRelativeTo(null);
             config.setVisible(true);

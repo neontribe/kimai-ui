@@ -3,8 +3,10 @@ package uk.co.neontribe.kimai.config;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -101,4 +103,19 @@ public class Settings {
         this.kimaiPassword = kimaiPassword;
     }
 
+    public static void save(Settings settings) throws FileNotFoundException, SecurityException {
+        Map<String, Object> data = new LinkedHashMap<String, Object>();
+        data.put("kimaiUri", settings.getKimaiUri());
+        data.put("kimaiUsername", settings.getKimaiUsername());
+        data.put("kimaiPassword", settings.getKimaiPassword());
+        Yaml yaml = new Yaml();
+        StringWriter stringWriter = new StringWriter();
+        yaml.dump(data, stringWriter);
+        String home = System.getProperty("user.home");
+        File settingsDir = new File(home, CONFIG_DIR);
+        PrintWriter fileOutputStream = new PrintWriter(new File(settingsDir, CONFIG_FILENAME));
+        fileOutputStream.println(stringWriter);
+        fileOutputStream.flush();
+        fileOutputStream.close();
+    }
 }
