@@ -37,8 +37,6 @@ public class Settings {
                 .load();
         CONFIG_DIR=dotenv.get("CONFIG_DIR", ".config/neontribe/kimai-ui");
         CONFIG_FILENAME=dotenv.get("CONFIG_FILENAME", "config.yml");
-        System.out.println(CONFIG_DIR);
-        System.out.println(CONFIG_FILENAME);
     }
 
     /**
