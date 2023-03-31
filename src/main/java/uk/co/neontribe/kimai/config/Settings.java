@@ -1,5 +1,6 @@
 package uk.co.neontribe.kimai.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -18,16 +19,27 @@ public class Settings {
     /**
      * The name of the config file
      */
-    protected static final String CONFIG_FILENAME = "config.yml";
+    protected static String CONFIG_FILENAME;
     /**
      * The path to the config file that holds the details to contact kimai
      */
-    protected static final String CONFIG_DIR = ".config/neontribe/kimai-ui";
+    protected static String CONFIG_DIR;
 
     /**
      * The singleton settings object
      */
     private static Settings kimaiSettings;
+
+    static {
+        Dotenv dotenv = Dotenv.configure()
+                .ignoreIfMalformed()
+                .ignoreIfMissing()
+                .load();
+        CONFIG_DIR=dotenv.get("CONFIG_DIR", ".config/neontribe/kimai-ui");
+        CONFIG_FILENAME=dotenv.get("CONFIG_FILENAME", "config.yml");
+        System.out.println(CONFIG_DIR);
+        System.out.println(CONFIG_FILENAME);
+    }
 
     /**
      * Get a singleton instance of our settings object.
@@ -53,7 +65,7 @@ public class Settings {
         // If the config file does not exist throw a ConfigNotInitialisedException error, this can be caught and handled
         File settingsFile = Settings.getConfigFile();
         if (!settingsFile.exists()) {
-            throw new ConfigNotInitialisedException();
+            throw new ConfigNotInitialisedException("Config not initialised");
         }
 
         // Read in the YAML config file
@@ -75,7 +87,7 @@ public class Settings {
 
         Object rawCustomers = data.get("customers");
         if (rawCustomers instanceof ArrayList<?>) {
-            ArrayList<String> customers = (ArrayList<String>)rawCustomers;
+            ArrayList<String> customers = (ArrayList<String>) rawCustomers;
             Settings.kimaiSettings.setCustomers(customers.toArray(new String[0]));
         }
 
@@ -85,6 +97,7 @@ public class Settings {
 
     /**
      * Get the user home and create a File object that points to the config dir
+     *
      * @return File The config dir
      */
     public static File getConfigDir() {
@@ -94,6 +107,7 @@ public class Settings {
 
     /**
      * Get the user home and create a File object that points to the config dir
+     *
      * @return File The config dir
      */
     public static File getConfigFile() {
