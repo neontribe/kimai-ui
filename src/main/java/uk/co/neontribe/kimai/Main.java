@@ -1,8 +1,6 @@
 package uk.co.neontribe.kimai;
 
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
-import uk.co.neontribe.kimai.config.Settings;
-import uk.co.neontribe.kimai.desktop.ConfigPanel;
 import uk.co.neontribe.kimai.desktop.KimaiUiFrame;
 
 import java.io.IOException;
