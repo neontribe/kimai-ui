@@ -7,11 +7,8 @@ import uk.co.neontribe.kimai.config.Settings;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -45,13 +42,12 @@ public class Customer {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String inputLine;
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         while ((inputLine = in.readLine()) != null) {
             content.append(inputLine);
         }
         in.close();
         Gson gson = new Gson();
-//        String json = gson.toJson(content);
         TypeToken<List<Customer>> customerType = new TypeToken<List<Customer>>() {};
         List<Customer> data = gson.fromJson(content.toString(), customerType );
 
@@ -61,15 +57,8 @@ public class Customer {
             customers[i] = data.get(i);
         }
 
-        System.out.println(customers[0].id);
-
         // map response
-        return customers; // (Customer[]) customers.toArray();
-    }
-
-    public String toString() {
-        return this.name + " [" + this.id + "]";
-
+        return customers;
     }
 
     public static void main(String [] args) throws ConfigNotInitialisedException, IOException {

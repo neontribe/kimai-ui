@@ -1,20 +1,33 @@
 package uk.co.neontribe.kimai.desktop;
+import uk.co.neontribe.kimai.api.Customer;
+import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class TimeEntryPanel extends JPanel {
 
-    private JComboBox customer;
-    private JComboBox project;
-    private JComboBox activity;
+    private JComboBox<String> list;
+    private JComboBox<String> clients;
+    private JComboBox<String> project;
+    private JComboBox<String> activity;
 
-    public TimeEntryPanel() {
+    public TimeEntryPanel() throws ConfigNotInitialisedException, IOException {
+
+        Customer[] customers = Customer.getCustomers();
+
+        ArrayList<String> listArray = new ArrayList<>(customers.length);
+        for (int i=0; i<customers.length; i++){
+            listArray.add( customers[i].getName());
+        }
+
         this.setLayout(new BorderLayout());
 
         JPanel left = new JPanel(new GridLayout(0, 2, 5, 5));
         left.add(new JLabel("Client"));
-        left.add(new JComboBox<String>());
+        left.add(new JComboBox(listArray.toArray()));
         left.add(new JLabel("Project"));
         left.add(new JComboBox<String>());
         left.add(new JLabel("Activity"));
@@ -25,7 +38,7 @@ public class TimeEntryPanel extends JPanel {
         JPanel right = new JPanel(new BorderLayout(5, 5));
 
         JPanel datePicker = new JPanel(new GridLayout(3,1, 2, 2));
-        datePicker.add(this.customer = new JComboBox<String>());
+        datePicker.add(this.clients = new JComboBox<String>());
         datePicker.add(this.project = new JComboBox<String>());
         datePicker.add(this.activity = new JComboBox<String>());
 
@@ -44,7 +57,7 @@ public class TimeEntryPanel extends JPanel {
     /**
      * Temp method, for deving
      */
-    public static void main(String [] args) {
+    public static void main(String [] args) throws ConfigNotInitialisedException, IOException {
         JPanel config = new TimeEntryPanel();
         JFrame frame = new JFrame("TimeEntryPanel");
         frame.add(config);
