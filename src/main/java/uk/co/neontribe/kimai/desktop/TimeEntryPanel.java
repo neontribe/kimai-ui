@@ -1,11 +1,20 @@
 package uk.co.neontribe.kimai.desktop;
+import net.sourceforge.jdatepicker.JDatePicker;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import uk.co.neontribe.kimai.api.Customer;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 
 import javax.swing.*;
+import javax.swing.text.DateFormatter;
+import javax.swing.text.DefaultFormatterFactory;
 import java.awt.*;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class TimeEntryPanel extends JPanel {
 
@@ -19,39 +28,51 @@ public class TimeEntryPanel extends JPanel {
         Customer[] customers = Customer.getCustomers();
 
         ArrayList<String> listArray = new ArrayList<>(customers.length);
-        for (int i=0; i<customers.length; i++){
-            listArray.add( customers[i].getName());
+        for (int i = 0; i < customers.length; i++) {
+            listArray.add(customers[i].getName());
         }
 
         this.setLayout(new BorderLayout());
 
-        JPanel left = new JPanel(new GridLayout(0, 2, 5, 5));
-        left.add(new JLabel("Client"));
-        left.add(new JComboBox(listArray.toArray()));
-        left.add(new JLabel("Project"));
-        left.add(new JComboBox<String>());
-        left.add(new JLabel("Activity"));
-        left.add(new JComboBox<String>());
+        JPanel center = new JPanel(new GridLayout(0, 5, 5, 5));
+        JPanel customersPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+        JPanel projectPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+        JPanel activityPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+        JPanel datePickerPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+        JPanel durationPanel = new JPanel(new GridLayout(0, 1, 5, 5));
 
-        this.add(left, BorderLayout.CENTER);
 
-        JPanel right = new JPanel(new BorderLayout(5, 5));
+        customersPanel.add(new JLabel("Client"));
+        customersPanel.add(new JComboBox(listArray.toArray()));
+        center.add(customersPanel, center);
 
-        JPanel datePicker = new JPanel(new GridLayout(3,1, 2, 2));
-        datePicker.add(this.clients = new JComboBox<String>());
-        datePicker.add(this.project = new JComboBox<String>());
-        datePicker.add(this.activity = new JComboBox<String>());
+        projectPanel.add(new JLabel("Client"));
+        projectPanel.add(new JComboBox<String>());
+        center.add(projectPanel, center);
 
-        right.add(new JLabel("Date"), BorderLayout.NORTH);
-        right.add(datePicker, BorderLayout.CENTER);
+        activityPanel.add(new JLabel("Activity"));
+        activityPanel.add(new JComboBox<String>());
+        center.add(activityPanel, center);
 
-        JPanel duration = new JPanel(new BorderLayout());
-        duration.add(new JLabel("Duration"), BorderLayout.WEST);
-        duration.add(new JTextField(), BorderLayout.CENTER);
+        datePickerPanel.add(new JLabel("Date"));
+        UtilDateModel model = new UtilDateModel();
+        JDatePanelImpl datePanel = new JDatePanelImpl(model);
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+        datePickerPanel.add(datePicker);
+        center.add(datePickerPanel, center);
 
-        right.add(duration, BorderLayout.SOUTH);
+        durationPanel.add(new JLabel(("Duration")));
+        JFormattedTextField duration = new JFormattedTextField();
+        duration.setFormatterFactory(new DefaultFormatterFactory(new DateFormatter(new SimpleDateFormat(
+                "H'h' mm'm'"))));
+        duration.setValue(Calendar.getInstance().getTime());
 
-        this.add(right, BorderLayout.EAST);
+        durationPanel.add(duration);
+        center.add(durationPanel, center);
+
+        this.add(center, BorderLayout.CENTER);
+
+
     }
 
     /**
