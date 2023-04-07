@@ -1,7 +1,12 @@
 package uk.co.neontribe.kimai.desktop;
 
+import org.jdatepicker.JDatePanel;
+import uk.co.neontribe.kimai.api.Customer;
+import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class TimeEntryPanel extends JPanel {
 
@@ -12,33 +17,55 @@ public class TimeEntryPanel extends JPanel {
     public TimeEntryPanel() {
         this.setLayout(new BorderLayout());
 
-        JPanel left = new JPanel(new GridLayout(0, 2, 5, 5));
-        left.add(new JLabel("Client"));
-        left.add(new JComboBox<String>());
-        left.add(new JLabel("Project"));
-        left.add(new JComboBox<String>());
-        left.add(new JLabel("Activity"));
-        left.add(new JComboBox<String>());
+        this.customer = makeCustomerCobmo();
 
-        this.add(left, BorderLayout.CENTER);
+        JPanel activityEntry = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        activityEntry.add(new JLabel("Client"), c);
+        c.gridy = 1;
+        activityEntry.add(new JLabel("Activity"), c);
+        c.gridy = 2;
+        activityEntry.add(new JLabel("Project"), c);
+        c.gridy = 3;
+        activityEntry.add(new JLabel("Duration"), c);
+
+        c.ipadx = 5;
+        c.ipady =5;
+        c.insets = new Insets(5,5,5,5);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 0;
+        c.gridwidth = 3;
+        activityEntry.add(customer, c);
+        c.gridy = 1;
+        activityEntry.add(new JComboBox<String>(), c);
+        c.gridy = 2;
+        activityEntry.add(new JComboBox<String>(), c);
+        c.gridy = 3;
+        activityEntry.add(new JTextField("this field is long enough to str"), c);;
 
         JPanel right = new JPanel(new BorderLayout(5, 5));
 
-        JPanel datePicker = new JPanel(new GridLayout(3,1, 2, 2));
-        datePicker.add(this.customer = new JComboBox<String>());
-        datePicker.add(this.project = new JComboBox<String>());
-        datePicker.add(this.activity = new JComboBox<String>());
-
+        JDatePanel datePicker = new JDatePanel();
         right.add(new JLabel("Date"), BorderLayout.NORTH);
         right.add(datePicker, BorderLayout.CENTER);
 
-        JPanel duration = new JPanel(new BorderLayout());
-        duration.add(new JLabel("Duration"), BorderLayout.WEST);
-        duration.add(new JTextField(), BorderLayout.CENTER);
-
-        right.add(duration, BorderLayout.SOUTH);
-
+        this.add(activityEntry, BorderLayout.WEST);
         this.add(right, BorderLayout.EAST);
+    }
+
+    private JComboBox makeCustomerCobmo() {
+        try {
+            Customer[] customers = Customer.getCustomers();
+            JComboBox<Customer> customer = new JComboBox<>(customers);
+            return  customer;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

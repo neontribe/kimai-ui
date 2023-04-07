@@ -61,8 +61,6 @@ public class Customer {
             customers[i] = data.get(i);
         }
 
-        System.out.println(customers[0].id);
-
         // map response
         return customers; // (Customer[]) customers.toArray();
     }
