@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
 
 public abstract class Entity {
     private String name;
@@ -31,13 +33,29 @@ public abstract class Entity {
 
 
     public static String callApi(URL url) throws ConfigNotInitialisedException, IOException {
-        return Entity.callApi(url, "GET");
+        return Entity.callApi(url, "GET", null);
     }
 
-    public static String callApi(URL url, String method) throws ConfigNotInitialisedException, IOException {
-        // get settings object
+    public static String callApi(URL url, List<Map.Entry<String, String>> parameters) throws ConfigNotInitialisedException, IOException {
+        return Entity.callApi(url, "GET", parameters);
+    }
+
+    public static String callApi(URL url, String method, List<Map.Entry<String, String>> parameters) throws ConfigNotInitialisedException, IOException {
+        if (parameters != null && parameters.size()>0) {
+            StringBuilder query = new StringBuilder();
+            for (Map.Entry<String, String> parameter : parameters) {
+                query.append(
+                        String.format(
+                                "%s=%s&",
+                                URLEncoder.encode(parameter.getKey(), "UTF-8"),
+                                URLEncoder.encode(parameter.getValue(), "UTF-8"))
+                );
+            }
+            url = new URL(url + "?" + query);
+        }
+        System.out.println(url);
+
         Settings settings = Settings.getInstance();
-        // call api
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestProperty("X-AUTH-USER", settings.getKimaiUsername());
         con.setRequestProperty("X-AUTH-TOKEN", settings.getKimaiPassword());

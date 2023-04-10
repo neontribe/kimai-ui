@@ -89,10 +89,19 @@ public class TimeEntryPanel extends JPanel {
         c.gridwidth = 1;
         this.add(datePicker, c);
 
+        JPanel actionPanel = new JPanel(new GridBagLayout());
+        JButton save = new JButton("Log time");
+        actionPanel.add(save);
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridheight = 1;
+        c.gridwidth = 3;
+        this.add(actionPanel, c);
+
         Settings settings = Settings.getInstance();
         statusPanel = new StatusPanel();
         c.gridx = 0;
-        c.gridy = 4;
+        c.gridy = 5;
         c.gridheight = 1;
         c.gridwidth = 3;
         this.add(statusPanel, c);
@@ -129,11 +138,9 @@ public class TimeEntryPanel extends JPanel {
 
     public void updateActivityCombo() {
         Project selectedProject = (Project) this.project.getSelectedValue();
-        System.out.println(selectedProject);
         if (selectedProject != null) {
             try {
                 Activity[] activities = Activity.getActivities(selectedProject.getId());
-                System.out.println(activities.length);
                 DefaultComboBoxModel<Activity> model = new DefaultComboBoxModel<>(activities);
                 activity.setModel(model);
             } catch (Exception e) {
