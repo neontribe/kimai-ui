@@ -1,88 +1,121 @@
 package uk.co.neontribe.kimai.desktop;
 
 import org.jdatepicker.JDatePanel;
+import sun.awt.XSettings;
 import uk.co.neontribe.kimai.api.Activity;
 import uk.co.neontribe.kimai.api.Customer;
 import uk.co.neontribe.kimai.api.Project;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
+import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 
 public class TimeEntryPanel extends JPanel {
 
-    private JComboBox customer;
-    private JComboBox project;
-    private JComboBox activity;
+    private JList customer;
+    private JList project;
+    private JList activity;
+
+    private JTextArea notes;
+
+    private StatusPanel statusPanel;
 
     public TimeEntryPanel() throws IOException, ConfigNotInitialisedException {
-        this.setLayout(new BorderLayout());
+        this.setLayout(new GridBagLayout());
 
-        this.customer = new JComboBox<>(Customer.getCustomers());
+        this.customer = new JList<>(Customer.getCustomers());
+        this.project = new JList<Project>();
+        this.activity = new JList<Activity>();
+        this.customer.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.project.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.activity.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         this.customer.setSelectedIndex(-1);
-        this.project = new JComboBox<Project>();
-        this.activity = new JComboBox<Activity>();
 
-        JPanel activityEntry = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        activityEntry.add(new JLabel("Client"), c);
-        c.gridy = 1;
-        activityEntry.add(new JLabel("Project"), c);
-        c.gridy = 2;
-        activityEntry.add(new JLabel("Activity"), c);
-        c.gridy = 3;
-        activityEntry.add(new JLabel("Duration"), c);
 
         c.ipadx = 5;
         c.ipady = 5;
+        c.gridwidth = 1;
         c.insets = new Insets(5, 5, 5, 5);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
+        c.fill = GridBagConstraints.BOTH;
+
         c.gridy = 0;
-        c.gridwidth = 3;
-        activityEntry.add(this.customer, c);
+
+        c.gridx = 0;
+        this.add(new JLabel("Client"), c);
+        c.gridx = 1;
+        this.add(new JLabel("Project"), c);
+        c.gridx = 2;
+        this.add(new JLabel("Activity"), c);
+
         c.gridy = 1;
-        activityEntry.add(this.project, c);
+
+        c.gridx = 0;
+        this.add(new JScrollPane(this.customer), c);
+        c.gridx = 1;
+        this.add(new JScrollPane(this.project), c);
+        c.gridx = 2;
+        this.add(new JScrollPane(this.activity), c);
+
+        c.gridx = 0;
         c.gridy = 2;
-        activityEntry.add(this.activity, c);
+        c.gridwidth = 2;
+        this.add(new DurationPanel(), c);
+
+        c.gridx = 0;
         c.gridy = 3;
-        activityEntry.add(new JTextField("this field is long enough to str"), c);
-        ;
+        c.gridwidth = 2;
+        notes = new JTextArea();
+        JScrollPane notesPane = new JScrollPane(notes);
+        notesPane.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED), "Notes"));
+        this.add(notesPane, c);
 
-        JPanel right = new JPanel(new BorderLayout(5, 5));
         JDatePanel datePicker = new JDatePanel();
-        right.add(datePicker, BorderLayout.CENTER);
+        c.gridx = 2;
+        c.gridy = 2;
+        c.gridheight = 2;
+        c.gridwidth = 1;
+        this.add(datePicker, c);
 
-        this.add(activityEntry, BorderLayout.WEST);
-        this.add(right, BorderLayout.EAST);
+        Settings settings = Settings.getInstance();
+        statusPanel = new StatusPanel();
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridheight = 1;
+        c.gridwidth = 3;
+        this.add(statusPanel, c);
 
-        customer.addActionListener(new ActionListener() {
+        customer.addListSelectionListener( new ListSelectionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                updateActivityCombos();
+            public void valueChanged(ListSelectionEvent listSelectionEvent) {
+                updateProjectCombo();
             }
         });
-        project.addActionListener(new ActionListener() {
+        project.addListSelectionListener( new ListSelectionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                updateActivityCombos();
+            public void valueChanged(ListSelectionEvent listSelectionEvent) {
+                updateActivityCombo();
             }
         });
 
         this.customer.setSelectedIndex(1);
-        updateActivityCombos();
+        updateProjectCombo();
     }
 
-    public void updateActivityCombos() {
-        Customer selectedCustomer = (Customer) customer.getSelectedItem();
+    public void updateProjectCombo() {
+        Customer selectedCustomer = (Customer) customer.getSelectedValue();
         if (selectedCustomer != null) {
             try {
                 Project[] projects = Project.getProjects(selectedCustomer.getId());
@@ -92,7 +125,11 @@ public class TimeEntryPanel extends JPanel {
                 throw new RuntimeException(e);
             }
         }
-        Project selectedProject = (Project) this.project.getSelectedItem();
+    }
+
+    public void updateActivityCombo() {
+        Project selectedProject = (Project) this.project.getSelectedValue();
+        System.out.println(selectedProject);
         if (selectedProject != null) {
             try {
                 Activity[] activities = Activity.getActivities(selectedProject.getId());
@@ -113,6 +150,7 @@ public class TimeEntryPanel extends JPanel {
         JFrame frame = new JFrame("TimeEntryPanel");
         frame.add(config);
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        // frame.setSize(1024,768);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

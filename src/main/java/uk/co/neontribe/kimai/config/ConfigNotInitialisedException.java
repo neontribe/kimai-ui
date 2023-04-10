@@ -1,6 +1,6 @@
 package uk.co.neontribe.kimai.config;
 
-public class ConfigNotInitialisedException extends Exception{
+public class ConfigNotInitialisedException extends RuntimeException{
     public ConfigNotInitialisedException(String configNotInitialised) {
         super(configNotInitialised);
     }

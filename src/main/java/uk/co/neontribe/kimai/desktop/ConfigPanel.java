@@ -12,6 +12,8 @@ import java.io.IOException;
 
 public class ConfigPanel extends JPanel implements ActionListener {
 
+    private static JDialog configFrame;
+
     private final JTextField uri;
     private final JTextField username;
     private final JTextField password;
@@ -38,6 +40,30 @@ public class ConfigPanel extends JPanel implements ActionListener {
 
     }
 
+    public static JDialog makeFrame(Component parent, Settings settings) {
+        if (configFrame == null) {
+            Frame topWindow = ConfigPanel.getParentFrame(parent);
+            configFrame = new JDialog(topWindow, "Settings");
+            configFrame.add(new ConfigPanel(settings), BorderLayout.CENTER);
+            configFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+            configFrame.pack();
+            configFrame.setLocationRelativeTo(topWindow);
+        }
+        return configFrame;
+    }
+
+    private static Frame getParentFrame(Component me) {
+        if (me instanceof Frame) {
+            return (Frame)me;
+        }
+
+        if (me == null) {
+            throw new RuntimeException("Cannot find top level frame");
+        }
+
+        return getParentFrame(me.getParent());
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
@@ -45,28 +71,9 @@ public class ConfigPanel extends JPanel implements ActionListener {
             settings.setKimaiUri(this.uri.getText());
             settings.setKimaiUsername(this.username.getText());
             settings.setKimaiPassword(this.password.getText());
-            if (Settings.save(settings)) {
-                frame.setVisible(false);
-            }
+            configFrame.setVisible(false);
         } catch (Exception ex) {
             System.err.println("Unreachable");
         }
     }
-
-    private static JFrame frame;
-
-    public static JFrame makeFrame(Settings settings) {
-        if (frame != null) {
-            return frame;
-        }
-        JPanel config = new ConfigPanel(settings);
-        frame = new JFrame("Config");
-        frame.add(config);
-        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-
-        return frame;
-    }
-
 }

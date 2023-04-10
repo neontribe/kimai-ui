@@ -38,8 +38,4 @@ public class Activity extends Entity {
         }
         return activities;
     }
-
-    public String toString() {
-        return this.getName() + " [" + this.getId() + "]";
-    }
 }

@@ -43,9 +43,4 @@ public class Project extends Entity {
         }
         return projects;
     }
-
-    public String toString() {
-        return this.getName() + " [" + this.getId() + "]";
-
-    }
 }

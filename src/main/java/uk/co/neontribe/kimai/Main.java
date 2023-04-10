@@ -3,6 +3,7 @@ package uk.co.neontribe.kimai;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.desktop.KimaiUiFrame;
 
+import javax.swing.*;
 import java.io.IOException;
 
 public class Main {
@@ -16,6 +17,7 @@ public class Main {
     public static void main(String[] args) throws ConfigNotInitialisedException, IOException {
         // Create a new application frame and show it.
         KimaiUiFrame frame = new KimaiUiFrame();
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         frame.setVisible(true);
     }
 }
