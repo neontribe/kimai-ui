@@ -18,13 +18,9 @@ public class User extends Entity {
         URL url = new URL(settings.getKimaiUri() + "/api/users/me");
         String content = Entity.callApi(url);
         Gson gson = new Gson();
-        TypeToken<List<User>> userType = new TypeToken<List<User>>() {
+        TypeToken<User> userType = new TypeToken<User>() {
         };
-        List<User> data = gson.fromJson(content, userType);
-        if (data.size() == 0) {
-            throw new RuntimeException("Unreachable?");
-        }
-        User user = data.get(0);
-        return user;
+        System.out.println(content);
+        return gson.fromJson(content, userType);
     }
 }

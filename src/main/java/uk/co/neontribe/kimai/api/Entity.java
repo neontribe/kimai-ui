@@ -74,6 +74,5 @@ public abstract class Entity {
 
     public String toString() {
         return this.name;
-
     }
 }

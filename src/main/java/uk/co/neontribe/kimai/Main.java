@@ -14,8 +14,9 @@ public class Main {
      * @throws ConfigNotInitialisedException Thrown when config location cannot be created.
      * @throws IOException Thrown if we can't read from the file system
      */
-    public static void main(String[] args) throws ConfigNotInitialisedException, IOException {
+    public static void main(String[] args) throws ConfigNotInitialisedException, IOException, UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         // Create a new application frame and show it.
+        // UIManager.setLookAndFeel ("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         KimaiUiFrame frame = new KimaiUiFrame();
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         frame.setVisible(true);

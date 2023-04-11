@@ -17,9 +17,11 @@ public class StatusPanel extends JPanel {
 
         JPanel buttons = new JPanel(new BorderLayout(10, 0));
 
+        // TODO Make this an icon (JIconImage)
         JButton settings = new JButton("...");
         settings.setBackground(null);
         settings.setFont(new Font("San-Serif", Font.BOLD, 16));
+        settings.addActionListener(actionEvent -> openConfigDialog());
         buttons.add(settings, BorderLayout.EAST);
 
         try {
@@ -30,14 +32,11 @@ public class StatusPanel extends JPanel {
             openKimai.setContentAreaFilled(false);
             openKimai.setBorderPainted(false);
             openKimai.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            openKimai.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    try {
-                        openWebpage(new URL(Settings.getInstance().getKimaiUri()));
-                    } catch (IOException e) {
-                        statusBar.setText(e.getMessage());
-                    }
+            openKimai.addActionListener(actionEvent -> {
+                try {
+                    openWebpage(new URL(Settings.getInstance().getKimaiUri()));
+                } catch (IOException e) {
+                    statusBar.setText(e.getMessage());
                 }
             });
             buttons.add(openKimai, BorderLayout.WEST);
@@ -53,13 +52,10 @@ public class StatusPanel extends JPanel {
         statusBar.setEditable(false);
 
         this.add(statusBar, BorderLayout.CENTER);
+    }
 
-        settings.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                    openConfigDialog();
-            }
-        });
+    public void setText(String text) {
+        this.statusBar.setText(text);
     }
 
     private void openConfigDialog() {

@@ -29,35 +29,6 @@ public class TimeSheet extends Entity {
         this.user = user;
     }
 
-    public static void postTimeSheet() {
-        List<Map.Entry<String, String>> parameters = new ArrayList<>();
-        parameters.add(new AbstractMap.SimpleEntry<>("begin", ""));
-        parameters.add(new AbstractMap.SimpleEntry<>("end", ""));
-        parameters.add(new AbstractMap.SimpleEntry<>("project", ""));
-        parameters.add(new AbstractMap.SimpleEntry<>("activity", ""));
-        parameters.add(new AbstractMap.SimpleEntry<>("user", ""));
-        parameters.add(new AbstractMap.SimpleEntry<>("description", ""));
-    }
-
-    /*
-
-￼Example Value
-￼Model
-{
-  "begin": "2023-03-31T09:47:08",
-  "end": "2023-03-31T09:47:08",
-  "project": 0,
-  "activity": 0,
-  "description": "string",
-  "fixedRate": 0,
-  "hourlyRate": 0,
-  "user": 0,
-  "exported": true,
-  "billable": true,
-  "tags": "string"
-}
-     */
-
     public String getDescription() {
         return this.getName();
     }
@@ -81,8 +52,41 @@ public class TimeSheet extends Entity {
         return user;
     }
 
-    public static void postTimeSheet(TimeSheet timeSheet) {
+    /*
 
+￼Example Value
+￼Model
+{
+  "begin": "2023-03-31T09:47:08",
+  "end": "2023-03-31T09:47:08",
+  "project": 0,
+  "activity": 0,
+  "description": "string",
+  "fixedRate": 0,
+  "hourlyRate": 0,
+  "user": 0,
+  "exported": true,
+  "billable": true,
+  "tags": "string"
+}
+     */
+
+    public static void postTimeSheet(TimeSheet timeSheet) {
+        System.out.println(timeSheet.getId());
+        System.out.println(timeSheet.getDescription());
+        System.out.println(timeSheet.getBegin());
+        System.out.println(timeSheet.getEnd());
+        System.out.println(timeSheet.getProject());
+        System.out.println(timeSheet.getActivity());
+        System.out.println(timeSheet.getUser());
+
+//        List<Map.Entry<String, String>> parameters = new ArrayList<>();
+//        parameters.add(new AbstractMap.SimpleEntry<>("begin", timeSheet.getBegin().toString()));
+//        parameters.add(new AbstractMap.SimpleEntry<>("end", timeSheet.getEnd().toString()));
+//        parameters.add(new AbstractMap.SimpleEntry<>("project", String.valueOf(timeSheet.get)));
+//        parameters.add(new AbstractMap.SimpleEntry<>("activity", ""));
+//        parameters.add(new AbstractMap.SimpleEntry<>("user", ""));
+//        parameters.add(new AbstractMap.SimpleEntry<>("description", ""));
     }
 
     public static TimeSheet[] getTimeSheets(int customerId, int projectId, int ActivityId, Object date, int duration) throws ConfigNotInitialisedException, IOException {

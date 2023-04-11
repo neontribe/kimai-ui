@@ -2,9 +2,7 @@ package uk.co.neontribe.kimai.desktop;
 
 import org.jdatepicker.JDatePanel;
 import sun.awt.XSettings;
-import uk.co.neontribe.kimai.api.Activity;
-import uk.co.neontribe.kimai.api.Customer;
-import uk.co.neontribe.kimai.api.Project;
+import uk.co.neontribe.kimai.api.*;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.config.Settings;
 
@@ -19,17 +17,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class TimeEntryPanel extends JPanel {
+public class TimeEntryPanel extends JPanel implements ActionListener {
 
-    private JList customer;
-    private JList project;
-    private JList activity;
+    private final JList<Customer> customer;
+    private final JList<Project> project;
+    private final JList<Activity> activity;
 
-    private JTextArea notes;
+    private final JTextArea notes;
+    private final JDatePanel date;
+    private final DurationPanel duration;
 
-    private StatusPanel statusPanel;
+    private final StatusPanel statusPanel;
 
     public TimeEntryPanel() throws IOException, ConfigNotInitialisedException {
         this.setLayout(new GridBagLayout());
@@ -40,6 +47,7 @@ public class TimeEntryPanel extends JPanel {
         this.customer.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.project.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.activity.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.duration = new DurationPanel();
 
         this.customer.setSelectedIndex(-1);
 
@@ -53,6 +61,7 @@ public class TimeEntryPanel extends JPanel {
 
         c.gridy = 0;
 
+        // TODO Refactor these to use TitledBorder (See notes below)
         c.gridx = 0;
         this.add(new JLabel("Client"), c);
         c.gridx = 1;
@@ -72,7 +81,7 @@ public class TimeEntryPanel extends JPanel {
         c.gridx = 0;
         c.gridy = 2;
         c.gridwidth = 2;
-        this.add(new DurationPanel(), c);
+        this.add(this.duration, c);
 
         c.gridx = 0;
         c.gridy = 3;
@@ -82,15 +91,16 @@ public class TimeEntryPanel extends JPanel {
         notesPane.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED), "Notes"));
         this.add(notesPane, c);
 
-        JDatePanel datePicker = new JDatePanel();
+        date = new JDatePanel(new Date());
         c.gridx = 2;
         c.gridy = 2;
         c.gridheight = 2;
         c.gridwidth = 1;
-        this.add(datePicker, c);
+        this.add(date, c);
 
         JPanel actionPanel = new JPanel(new GridBagLayout());
         JButton save = new JButton("Log time");
+        save.addActionListener(this);
         actionPanel.add(save);
         c.gridx = 0;
         c.gridy = 4;
@@ -161,5 +171,49 @@ public class TimeEntryPanel extends JPanel {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        // TODO Better error handling and better feedback
+        try {
+            int _project = ((Project) this.project.getSelectedValue()).getId();
+            int _activity = ((Activity) this.activity.getSelectedValue()).getId();
+            Date _begin = (Date) this.date.getModel().getValue();
+            String _notes = this.notes.getText();
+            String _duration = this.duration.getDuration();
+            int user = User.getCurrentUser().getId();
+
+            Pattern pattern = Pattern.compile("^\\d+:\\d{2}$");
+            Matcher matcher = pattern.matcher(_duration);
+
+            if (!matcher.find()) {
+                throw new RuntimeException("Duration is not hh:mm");
+            }
+
+            String match = matcher.group();
+            int hours = Integer.parseInt(match.substring(0, match.indexOf(":")));
+            int minutes = (hours * 60) + Integer.parseInt(match.substring(match.indexOf(":") + 1));
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(_begin);
+            Date _end = new Date(cal.getTimeInMillis() + (60L * minutes * 1000));
+
+            TimeSheet timesheet = new TimeSheet(
+                    _notes,
+                    _begin,
+                    _end,
+                    _project,
+                    _activity,
+                    user
+            );
+            TimeSheet.postTimeSheet(timesheet);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (e.getMessage() == null) {
+                this.statusPanel.setText(e.getClass() + ": TODO - better feedback");
+            } else {
+                this.statusPanel.setText(e.getMessage());
+            }
+        }
     }
 }
