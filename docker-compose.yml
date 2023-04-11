@@ -44,7 +44,7 @@ services:
       retries: 3
 
   kimai: # This is the latest FPM image of kimai
-    image: kimai/kimai2:fpm
+    image: kimai/kimai2:fpm-dev
     environment:
       - ADMINMAIL=admin@kimai.local
       - ADMINPASS=changemeplease

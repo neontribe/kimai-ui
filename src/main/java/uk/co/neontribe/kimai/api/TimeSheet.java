@@ -1,37 +1,34 @@
 package uk.co.neontribe.kimai.api;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
+import com.google.gson.GsonBuilder;
+import lombok.AllArgsConstructor;
+import uk.co.neontribe.kimai.api.dto.TimeSheetDto;
 import uk.co.neontribe.kimai.config.Settings;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Date;
 
+@AllArgsConstructor
 public class TimeSheet extends Entity {
 
-    Date begin;
-    Date end;
-    int project;
-    int activity;
-    int user;
+    private String description;
+    private int id;
+    private Date begin;
+    private Date end;
+    private int project;
+    private int activity;
+    private int user;
 
     public TimeSheet(String description, Date begin, Date end, int project, int activity, int user) {
         this(description, -1, begin, end, project, activity, user);
     }
-    public TimeSheet(String description, int id, Date begin, Date end, int project, int activity, int user) {
-        super(description, id);
-        this.begin = begin;
-        this.end = end;
-        this.project = project;
-        this.activity = activity;
-        this.user = user;
-    }
 
     public String getDescription() {
-        return this.getName();
+        return description;
     }
+
     public Date getBegin() {
         return begin;
     }
@@ -52,56 +49,33 @@ public class TimeSheet extends Entity {
         return user;
     }
 
-    /*
-
-￼Example Value
-￼Model
-{
-  "begin": "2023-03-31T09:47:08",
-  "end": "2023-03-31T09:47:08",
-  "project": 0,
-  "activity": 0,
-  "description": "string",
-  "fixedRate": 0,
-  "hourlyRate": 0,
-  "user": 0,
-  "exported": true,
-  "billable": true,
-  "tags": "string"
-}
-     */
-
-    public static void postTimeSheet(TimeSheet timeSheet) {
-        System.out.println(timeSheet.getId());
-        System.out.println(timeSheet.getDescription());
-        System.out.println(timeSheet.getBegin());
-        System.out.println(timeSheet.getEnd());
-        System.out.println(timeSheet.getProject());
-        System.out.println(timeSheet.getActivity());
-        System.out.println(timeSheet.getUser());
-
-//        List<Map.Entry<String, String>> parameters = new ArrayList<>();
-//        parameters.add(new AbstractMap.SimpleEntry<>("begin", timeSheet.getBegin().toString()));
-//        parameters.add(new AbstractMap.SimpleEntry<>("end", timeSheet.getEnd().toString()));
-//        parameters.add(new AbstractMap.SimpleEntry<>("project", String.valueOf(timeSheet.get)));
-//        parameters.add(new AbstractMap.SimpleEntry<>("activity", ""));
-//        parameters.add(new AbstractMap.SimpleEntry<>("user", ""));
-//        parameters.add(new AbstractMap.SimpleEntry<>("description", ""));
-    }
-
-    public static TimeSheet[] getTimeSheets(int customerId, int projectId, int ActivityId, Object date, int duration) throws ConfigNotInitialisedException, IOException {
+    public static String postTimeSheet(TimeSheet timeSheet) throws IOException {
         Settings settings = Settings.getInstance();
         URL url = new URL(settings.getKimaiUri() + "/api/timesheets");
-        String content = Entity.callApi(url);
-        Gson gson = new Gson();
-        TypeToken<List<TimeSheet>> projectType = new TypeToken<List<TimeSheet>>() {
-        };
-        List<TimeSheet> data = gson.fromJson(content, projectType);
-        // data.removeIf(p -> p.getCustomer() != id);
-        TimeSheet[] timesheets = new TimeSheet[data.size()];
-        for (int i = 0; i < data.size(); i++) {
-            timesheets[i] = data.get(i);
-        }
-        return timesheets;
+
+        TimeSheetDto timeSheetDto = new TimeSheetDto(timeSheet);
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting();
+        builder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+        Gson gson = builder.create();
+        String postContent = gson.toJson(timeSheetDto);
+
+        return postApi(url, postContent);
     }
+
+//    public static TimeSheet[] getTimeSheets(int customerId, int projectId, int ActivityId, Object date, int duration) throws ConfigNotInitialisedException, IOException {
+//        Settings settings = Settings.getInstance();
+//        URL url = new URL(settings.getKimaiUri() + "/api/timesheets");
+//        String content = Entity.callApi(url);
+//        Gson gson = new Gson();
+//        TypeToken<List<TimeSheet>> projectType = new TypeToken<List<TimeSheet>>() {
+//        };
+//        List<TimeSheet> data = gson.fromJson(content, projectType);
+//        // data.removeIf(p -> p.getCustomer() != id);
+//        TimeSheet[] timesheets = new TimeSheet[data.size()];
+//        for (int i = 0; i < data.size(); i++) {
+//            timesheets[i] = data.get(i);
+//        }
+//        return timesheets;
+//    }
 }

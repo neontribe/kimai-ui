@@ -207,6 +207,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                     user
             );
             TimeSheet.postTimeSheet(timesheet);
+            this.statusPanel.setText("Time entry created.");
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getMessage() == null) {
