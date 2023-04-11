@@ -2,10 +2,12 @@ package uk.co.neontribe.kimai.desktop;
 
 import uk.co.neontribe.kimai.config.Settings;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
@@ -17,10 +19,16 @@ public class StatusPanel extends JPanel {
 
         JPanel buttons = new JPanel(new BorderLayout(10, 0));
 
-        // TODO Make this an icon (JIconImage)
-        JButton settings = new JButton("...");
-        settings.setBackground(null);
-        settings.setFont(new Font("San-Serif", Font.BOLD, 16));
+        JButton settings = new JButton();
+
+        ImageIcon cogIcon = new ImageIcon("Images/cog.png");
+        Image cogImg = cogIcon.getImage();
+
+        Image newCogImg = cogImg.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+
+        ImageIcon newCogIcon = new ImageIcon(newCogImg);
+        settings.setIcon(newCogIcon);
+
         settings.addActionListener(actionEvent -> openConfigDialog());
         buttons.add(settings, BorderLayout.EAST);
 
