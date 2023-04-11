@@ -30,7 +30,6 @@ public abstract class Entity {
     }
 
     public static String getApi(URL url, List<Map.Entry<String, String>> parameters) throws ConfigNotInitialisedException, IOException {
-        // return Entity.callApi(url, "GET", parameters, null);
         if (parameters != null && parameters.size() > 0) {
             StringBuilder query = new StringBuilder();
             for (Map.Entry<String, String> parameter : parameters) {

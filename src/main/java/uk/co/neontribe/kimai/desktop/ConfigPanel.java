@@ -52,13 +52,13 @@ public class ConfigPanel extends JPanel implements ActionListener {
         return configFrame;
     }
 
-    private static Frame getParentFrame(Component me) {
+    public static Frame getParentFrame(Component me) {
         if (me instanceof Frame) {
             return (Frame)me;
         }
 
         if (me == null) {
-            throw new RuntimeException("Cannot find top level frame");
+            return null;
         }
 
         return getParentFrame(me.getParent());

@@ -2,16 +2,22 @@ package uk.co.neontribe.kimai.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import lombok.AllArgsConstructor;
 import uk.co.neontribe.kimai.api.dto.TimeSheetDto;
 import uk.co.neontribe.kimai.config.Settings;
+import uk.co.neontribe.kimai.desktop.DuplicateEntryModal;
+import uk.co.neontribe.kimai.desktop.DurationPanel;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @AllArgsConstructor
 public class TimeSheet extends Entity {
+
+    static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
     private String description;
     private int id;
@@ -20,10 +26,6 @@ public class TimeSheet extends Entity {
     private int project;
     private int activity;
     private int user;
-
-    public TimeSheet(String description, Date begin, Date end, int project, int activity, int user) {
-        this(description, -1, begin, end, project, activity, user);
-    }
 
     public String getDescription() {
         return description;
@@ -53,29 +55,47 @@ public class TimeSheet extends Entity {
         Settings settings = Settings.getInstance();
         URL url = new URL(settings.getKimaiUri() + "/api/timesheets");
 
+        TimeSheet [] timesheets = getTimeSheets(timeSheet.project, timeSheet.activity, timeSheet.begin, timeSheet.end);
+        if (timesheets.length > 0) {
+            DuplicateEntryModal duplicateEntryModal = new DuplicateEntryModal();
+            duplicateEntryModal.setVisible(true);
+            if (!duplicateEntryModal.getShouldProceed()) {
+                return null;
+            }
+        }
+
         TimeSheetDto timeSheetDto = new TimeSheetDto(timeSheet);
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
-        builder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+        builder.setDateFormat(DATE_FORMAT).create();
         Gson gson = builder.create();
         String postContent = gson.toJson(timeSheetDto);
 
         return postApi(url, postContent);
     }
 
-//    public static TimeSheet[] getTimeSheets(int customerId, int projectId, int ActivityId, Object date, int duration) throws ConfigNotInitialisedException, IOException {
-//        Settings settings = Settings.getInstance();
-//        URL url = new URL(settings.getKimaiUri() + "/api/timesheets");
-//        String content = Entity.callApi(url);
-//        Gson gson = new Gson();
-//        TypeToken<List<TimeSheet>> projectType = new TypeToken<List<TimeSheet>>() {
-//        };
-//        List<TimeSheet> data = gson.fromJson(content, projectType);
-//        // data.removeIf(p -> p.getCustomer() != id);
-//        TimeSheet[] timesheets = new TimeSheet[data.size()];
-//        for (int i = 0; i < data.size(); i++) {
-//            timesheets[i] = data.get(i);
-//        }
-//        return timesheets;
-//    }
+    public static TimeSheet[] getTimeSheets(int projectId, int activityId, Date begin, Date end) throws IOException {
+        Settings settings = Settings.getInstance();
+        URL url = new URL(settings.getKimaiUri() + "/api/timesheets");
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
+
+        List<Map.Entry<String, String>> parameters = new ArrayList<>();
+        // TODO Fix this to work when project and activity get replaced with projects and activities
+        parameters.add(new AbstractMap.SimpleEntry<>("project", String.valueOf(projectId)));
+        parameters.add(new AbstractMap.SimpleEntry<>("activity", String.valueOf(activityId)));
+        parameters.add(new AbstractMap.SimpleEntry<>("begin", simpleDateFormat.format(begin)));
+        parameters.add(new AbstractMap.SimpleEntry<>("end", simpleDateFormat.format(end)));
+
+        String content = Entity.getApi(url, parameters);
+        Gson gson = new Gson();
+        TypeToken<List<TimeSheet>> projectType = new TypeToken<List<TimeSheet>>() {
+        };
+        List<TimeSheet> data = gson.fromJson(content, projectType);
+        TimeSheet[] timesheets = new TimeSheet[data.size()];
+        for (int i = 0; i < data.size(); i++) {
+            timesheets[i] = data.get(i);
+        }
+        return timesheets;
+    }
 }

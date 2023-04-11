@@ -108,7 +108,6 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         c.gridwidth = 3;
         this.add(actionPanel, c);
 
-        Settings settings = Settings.getInstance();
         statusPanel = new StatusPanel();
         c.gridx = 0;
         c.gridy = 5;
@@ -116,13 +115,13 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         c.gridwidth = 3;
         this.add(statusPanel, c);
 
-        customer.addListSelectionListener( new ListSelectionListener() {
+        customer.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 updateProjectCombo();
             }
         });
-        project.addListSelectionListener( new ListSelectionListener() {
+        project.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 updateActivityCombo();
@@ -134,6 +133,10 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
     }
 
     public void updateProjectCombo() {
+        Component topLevelFrame = ConfigPanel.getParentFrame(this);
+        if (topLevelFrame != null) {
+            topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        }
         Customer selectedCustomer = (Customer) customer.getSelectedValue();
         if (selectedCustomer != null) {
             try {
@@ -141,12 +144,22 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                 DefaultComboBoxModel<Project> model = new DefaultComboBoxModel<>(projects);
                 project.setModel(model);
             } catch (Exception e) {
+                if (topLevelFrame != null) {
+                    topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
                 throw new RuntimeException(e);
             }
+        }
+        if (topLevelFrame != null) {
+            topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
     public void updateActivityCombo() {
+        Component topLevelFrame = ConfigPanel.getParentFrame(this);
+        if (topLevelFrame != null) {
+            topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        }
         Project selectedProject = (Project) this.project.getSelectedValue();
         if (selectedProject != null) {
             try {
@@ -154,8 +167,14 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                 DefaultComboBoxModel<Activity> model = new DefaultComboBoxModel<>(activities);
                 activity.setModel(model);
             } catch (Exception e) {
+                if (topLevelFrame != null) {
+                    topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
                 throw new RuntimeException(e);
             }
+        }
+        if (topLevelFrame != null) {
+            topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
@@ -200,14 +219,25 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
 
             TimeSheet timesheet = new TimeSheet(
                     _notes,
+                    -1,
                     _begin,
                     _end,
                     _project,
                     _activity,
                     user
             );
-            TimeSheet.postTimeSheet(timesheet);
-            this.statusPanel.setText("Time entry created.");
+            Component topLevelFrame = ConfigPanel.getParentFrame(this);
+            if (topLevelFrame != null) {
+                topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            }
+            if (TimeSheet.postTimeSheet(timesheet) != null) {
+                this.statusPanel.setText("Time entry created.");
+            } else {
+                this.statusPanel.setText("");
+            }
+            if (topLevelFrame != null) {
+                topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getMessage() == null) {
