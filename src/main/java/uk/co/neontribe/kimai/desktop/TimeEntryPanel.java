@@ -116,13 +116,13 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         c.gridwidth = 3;
         this.add(statusPanel, c);
 
-        customer.addListSelectionListener( new ListSelectionListener() {
+        customer.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 updateProjectCombo();
             }
         });
-        project.addListSelectionListener( new ListSelectionListener() {
+        project.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 updateActivityCombo();
@@ -157,6 +157,16 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    // adds desired JComponent to specific row/column in GridBagLayout
+    private void addToGridBagLayout(int x, int y, GridBagConstraints c, JComponent component) {
+
+        c.gridx = x;
+        c.gridy = y;
+
+        this.add(component, c);
+
     }
 
     /**
@@ -204,8 +214,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                     _end,
                     _project,
                     _activity,
-                    user
-            );
+                    user);
             TimeSheet.postTimeSheet(timesheet);
         } catch (Exception e) {
             e.printStackTrace();
