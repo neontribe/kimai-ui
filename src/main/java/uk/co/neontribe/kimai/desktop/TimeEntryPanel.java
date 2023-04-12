@@ -220,15 +220,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
             cal.setTime(_begin);
             Date _end = new Date(cal.getTimeInMillis() + (60L * minutes * 1000));
 
-            TimeSheet timesheet = new TimeSheet(
-                    _notes,
-                    -1,
-                    _begin,
-                    _end,
-                    _project,
-                    _activity,
-                    user
-            );
+            TimeSheet timesheet = new TimeSheet(_notes, -1, _begin, _end, _project, _activity, user);
             Component topLevelFrame = ConfigPanel.getParentFrame(this);
             if (topLevelFrame != null) {
                 topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

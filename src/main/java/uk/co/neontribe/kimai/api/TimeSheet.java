@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import uk.co.neontribe.kimai.api.dto.TimeSheetDto;
 import uk.co.neontribe.kimai.config.Settings;
 import uk.co.neontribe.kimai.desktop.DuplicateEntryModal;
-import uk.co.neontribe.kimai.desktop.DurationPanel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -55,7 +54,7 @@ public class TimeSheet extends Entity {
         Settings settings = Settings.getInstance();
         URL url = new URL(settings.getKimaiUri() + "/api/timesheets");
 
-        TimeSheet [] timesheets = getTimeSheets(timeSheet.project, timeSheet.activity, timeSheet.begin, timeSheet.end);
+        TimeSheet[] timesheets = getTimeSheets(timeSheet.project, timeSheet.activity, timeSheet.begin, timeSheet.end);
         if (timesheets.length > 0) {
             DuplicateEntryModal duplicateEntryModal = new DuplicateEntryModal();
             duplicateEntryModal.setVisible(true);

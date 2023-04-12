@@ -1,6 +1,5 @@
 package uk.co.neontribe.kimai.config;
 
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 
