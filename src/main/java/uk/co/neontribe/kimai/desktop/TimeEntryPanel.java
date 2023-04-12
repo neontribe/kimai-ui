@@ -1,13 +1,9 @@
 package uk.co.neontribe.kimai.desktop;
 
 import org.jdatepicker.JDatePanel;
-import org.mockito.internal.matchers.Any;
 
-import javafx.scene.layout.Border;
-import sun.awt.XSettings;
 import uk.co.neontribe.kimai.api.*;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
-import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
 
@@ -19,11 +15,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.net.URL;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -238,8 +229,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                     _end,
                     _project,
                     _activity,
-                    user
-            );
+                    user);
             Component topLevelFrame = ConfigPanel.getParentFrame(this);
             if (topLevelFrame != null) {
                 topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
