@@ -1,31 +1,21 @@
 package uk.co.neontribe.kimai.config;
 
 
-<<<<<<< Updated upstream
-import io.github.cdimascio.dotenv.Dotenv;
-import org.junit.jupiter.api.Assertions;
-import org.mockito.Mockito;
-=======
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
->>>>>>> Stashed changes
 
-import java.io.*;
-import java.nio.charset.Charset;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
-<<<<<<< Updated upstream
-import java.util.Set;
-=======
 import java.util.Random;
->>>>>>> Stashed changes
 
 import static org.junit.Assert.assertThrows;
 
-//@TestMethodOrder(MethodOrderer.MethodName.class)
 class SettingsTest {
+
+    private static final String [] CUSTOMERS = {"1", "2", "3", "5", "7", "11", "13"};
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() throws IOException {
@@ -57,10 +47,24 @@ class SettingsTest {
     @org.junit.jupiter.api.Test
     void getInstance() throws ConfigNotInitialisedException, IOException {
         Settings settings = Settings.getInstance();
+        Assertions.assertInstanceOf(Settings.class, settings);
     }
 
     @org.junit.jupiter.api.Test
-    void save() {
+    void save() throws IOException {
+        Settings settings = Settings.getInstance();
+        settings.setKimaiUri("http://new.url.com");
+        settings.setKimaiUsername("saveuser");
+        settings.setKimaiPassword("savepass");
+        settings.setCustomers(CUSTOMERS);
+
+        Settings.save(settings);
+
+        Settings _settings = Settings.getInstance();
+        Assertions.assertEquals("http://new.url.com", _settings.getKimaiUri());
+        Assertions.assertEquals("saveuser", _settings.getKimaiUsername());
+        Assertions.assertEquals("savepass", _settings.getKimaiPassword());
+        Assertions.assertArrayEquals(CUSTOMERS, _settings.getCustomers());
     }
 
     private String randomName() {
@@ -138,10 +142,9 @@ class SettingsTest {
     @org.junit.jupiter.api.Test
     void setCustomers() throws IOException {
         Settings settings = Settings.getInstance();
-        String[] customers = {"1", "2", "3", "5", "7", "11", "13"};
-        settings.setCustomers(customers);
+        settings.setCustomers(CUSTOMERS);
         String[] _customers = settings.getCustomers();
-        Assertions.assertEquals(7, customers.length);
-        Assertions.assertArrayEquals(customers, _customers);
+        Assertions.assertEquals(7, CUSTOMERS.length);
+        Assertions.assertArrayEquals(CUSTOMERS, _customers);
     }
 }

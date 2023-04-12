@@ -165,6 +165,8 @@ public class Settings {
         writer.flush();
         writer.close();
 
+        reset();
+
         return true;
     }
 }
