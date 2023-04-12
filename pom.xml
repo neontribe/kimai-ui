@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-testng</artifactId>
-            <version>0.4.30</version>
+            <version>0.4.31</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -65,7 +65,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.4</version>
+                <version>1.12.1</version>
 
                 <executions>
                     <execution>

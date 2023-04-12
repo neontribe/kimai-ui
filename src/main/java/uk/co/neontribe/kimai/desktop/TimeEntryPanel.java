@@ -1,14 +1,17 @@
 package uk.co.neontribe.kimai.desktop;
 
 import org.jdatepicker.JDatePanel;
+import org.mockito.internal.matchers.Any;
+
+import javafx.scene.layout.Border;
 import sun.awt.XSettings;
 import uk.co.neontribe.kimai.api.*;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
+
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -61,22 +64,13 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
 
         c.gridy = 0;
 
-        // TODO Refactor these to use TitledBorder (See notes below)
         c.gridx = 0;
-        this.add(new JLabel("Client"), c);
+        this.add(addBorder("Client", new JScrollPane(this.customer)), c);
         c.gridx = 1;
-        this.add(new JLabel("Project"), c);
-        c.gridx = 2;
-        this.add(new JLabel("Activity"), c);
+        this.add(addBorder("Project", new JScrollPane(this.project)), c);
 
-        c.gridy = 1;
-
-        c.gridx = 0;
-        this.add(new JScrollPane(this.customer), c);
-        c.gridx = 1;
-        this.add(new JScrollPane(this.project), c);
         c.gridx = 2;
-        this.add(new JScrollPane(this.activity), c);
+        this.add(addBorder("Activity", new JScrollPane(this.activity)), c);
 
         c.gridx = 0;
         c.gridy = 2;
@@ -88,8 +82,8 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         c.gridwidth = 2;
         notes = new JTextArea();
         JScrollPane notesPane = new JScrollPane(notes);
-        notesPane.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED), "Notes"));
-        this.add(notesPane, c);
+
+        this.add(addBorder("Notes", notesPane), c);
 
         date = new JDatePanel(new Date());
         c.gridx = 2;
@@ -155,6 +149,16 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         }
     }
 
+    private JComponent addBorder(String title, JComponent gridComponent) {
+
+        LineBorder lineBorder = new LineBorder(Color.GRAY, 1, true);
+        TitledBorder clientTitle = new TitledBorder(lineBorder, title);
+        gridComponent.setBorder(clientTitle);
+
+        return gridComponent;
+
+    }
+
     public void updateActivityCombo() {
         Component topLevelFrame = ConfigPanel.getParentFrame(this);
         if (topLevelFrame != null) {
@@ -176,6 +180,16 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         if (topLevelFrame != null) {
             topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
+    }
+
+    // adds desired JComponent to specific row/column in GridBagLayout
+    private void addToGridBagLayout(int x, int y, GridBagConstraints c, JComponent component) {
+
+        c.gridx = x;
+        c.gridy = y;
+
+        this.add(component, c);
+
     }
 
     /**
@@ -238,6 +252,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
             if (topLevelFrame != null) {
                 topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
+            TimeSheet.postTimeSheet(timesheet);
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getMessage() == null) {
