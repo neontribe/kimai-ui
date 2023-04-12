@@ -39,6 +39,10 @@ public class Settings {
         CONFIG_FILENAME=dotenv.get("CONFIG_FILENAME", "config.yml");
     }
 
+    public static void reset() {
+        Settings.kimaiSettings = null;
+    }
+
     /**
      * Get a singleton instance of our settings object.
      *
@@ -122,9 +126,7 @@ public class Settings {
         return kimaiUri;
     }
 
-    public void setKimaiUri(String kimaiUri) {
-        this.kimaiUri = kimaiUri;
-    }
+    public void setKimaiUri(String kimaiUri) {this.kimaiUri = kimaiUri;}
 
     public String getKimaiUsername() {
         return kimaiUsername;
