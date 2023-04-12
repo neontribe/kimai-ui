@@ -15,6 +15,17 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Entity {
+    private String name;
+    private int id;
+
+    public String getName() {
+        return name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
     public static HttpURLConnection makeHttpConnection(URL url) throws IOException {
         Settings settings = Settings.getInstance();
         HttpURLConnection con = (HttpURLConnection) url.openConnection();

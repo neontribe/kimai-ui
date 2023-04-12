@@ -10,17 +10,6 @@ import java.net.URL;
 
 @AllArgsConstructor
 public class User extends Entity {
-    private String name;
-    private int id;
-
-    public String getName() {
-        return name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
 
     public static User getCurrentUser() throws IOException {
         Settings settings = Settings.getInstance();

@@ -19,7 +19,6 @@ public class TimeSheet extends Entity {
     static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
     private String description;
-    private int id;
     private Date begin;
     private Date end;
     private int project;

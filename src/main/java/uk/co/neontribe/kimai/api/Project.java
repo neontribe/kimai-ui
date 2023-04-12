@@ -13,18 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Project extends Entity {
 
-    private String name;
-    private int id;
-
-    public String getName() {
-        return name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-
     private int customer;
 
 

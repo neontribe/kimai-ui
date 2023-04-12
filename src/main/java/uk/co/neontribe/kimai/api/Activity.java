@@ -13,17 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Activity extends Entity {
 
-    private String name;
-    private int id;
-
-    public String getName() {
-        return name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
     private int project;
 
 
