@@ -1,6 +1,7 @@
 package uk.co.neontribe.kimai.api;
 
 import com.google.gson.reflect.TypeToken;
+import lombok.AllArgsConstructor;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.config.Settings;
 
@@ -16,16 +17,24 @@ import java.util.List;
 
 import com.google.gson.Gson;
 
+@AllArgsConstructor
 public class Customer extends Entity {
-    public Customer(String name, int id) {
-        super(name, id);
+    private String name;
+    private int id;
+
+    public String getName() {
+        return name;
+    }
+
+    public int getId() {
+        return id;
     }
 
 
     public static Customer[] getCustomers() throws ConfigNotInitialisedException, IOException {
         Settings settings = Settings.getInstance();
         URL url = new URL(settings.getKimaiUri() + "/api/customers");
-        String content = Entity.callApi(url);
+        String content = Entity.getApi(url);
         Gson gson = new Gson();
         TypeToken<List<Customer>> customerType = new TypeToken<List<Customer>>() {
         };
@@ -35,5 +44,9 @@ public class Customer extends Entity {
             customers[i] = data.get(i);
         }
         return customers;
+    }
+
+    public String toString() {
+        return this.getName();
     }
 }
