@@ -19,6 +19,7 @@ public class ConfigPanel extends JPanel implements ActionListener {
     public ConfigPanel(Settings settings) {
         this.setLayout(new BorderLayout(5, 5));
         this.setBorder(new EmptyBorder(5, 5, 5, 5));
+        this.add(new Header("Config Panel"), BorderLayout.NORTH);
 
         JPanel gridRight = new JPanel(new GridLayout(0, 1, 5, 5));
         gridRight.add(uri = new JTextField(settings.getKimaiUri(), 30));

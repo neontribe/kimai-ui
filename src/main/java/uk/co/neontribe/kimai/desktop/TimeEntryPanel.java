@@ -2,11 +2,12 @@ package uk.co.neontribe.kimai.desktop;
 
 import org.jdatepicker.JDatePanel;
 
+import javafx.scene.layout.Border;
 import uk.co.neontribe.kimai.api.*;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 
 import javax.swing.*;
-
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -33,6 +34,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
     private final StatusPanel statusPanel;
 
     public TimeEntryPanel() throws IOException, ConfigNotInitialisedException {
+        this.setBackground(Color.WHITE);
         this.setLayout(new GridBagLayout());
 
         this.customer = new JList<>(Customer.getCustomers());
@@ -47,13 +49,21 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
 
         GridBagConstraints c = new GridBagConstraints();
 
+        c.gridy = 0;
+        c.gridwidth = 3;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.ipady = 20;
+
+        this.add(new Header("Timetracking sheet"), c);
+
         c.ipadx = 5;
         c.ipady = 5;
         c.gridwidth = 1;
         c.insets = new Insets(5, 5, 5, 5);
         c.fill = GridBagConstraints.BOTH;
 
-        c.gridy = 0;
+        c.gridy = 1;
 
         c.gridx = 0;
         this.add(addBorder("Client", new JScrollPane(this.customer)), c);
