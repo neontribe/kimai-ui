@@ -1,6 +1,5 @@
 package uk.co.neontribe.kimai.desktop;
 
-import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
@@ -8,7 +7,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 public class ConfigPanel extends JPanel implements ActionListener {
 
@@ -19,16 +17,16 @@ public class ConfigPanel extends JPanel implements ActionListener {
     private final JTextField password;
 
     public ConfigPanel(Settings settings) {
-        this.setLayout(new BorderLayout(5,5));
-        this.setBorder(new EmptyBorder(5,5,5,5));
+        this.setLayout(new BorderLayout(5, 5));
+        this.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-        JPanel gridRight = new JPanel(new GridLayout(0,1, 5,5));
+        JPanel gridRight = new JPanel(new GridLayout(0, 1, 5, 5));
         gridRight.add(uri = new JTextField(settings.getKimaiUri(), 30));
         gridRight.add(username = new JTextField(settings.getKimaiUsername(), 30));
         gridRight.add(password = new JTextField(settings.getKimaiPassword(), 30));
         this.add(gridRight, BorderLayout.CENTER);
 
-        JPanel gridLeft = new JPanel(new GridLayout(0,1,5,5));
+        JPanel gridLeft = new JPanel(new GridLayout(0, 1, 5, 5));
         gridLeft.add(new JLabel("Your Kimai Uri:"));
         gridLeft.add(new JLabel("Username:"));
         gridLeft.add(new JLabel("Password:"));
@@ -54,7 +52,7 @@ public class ConfigPanel extends JPanel implements ActionListener {
 
     public static Frame getParentFrame(Component me) {
         if (me instanceof Frame) {
-            return (Frame)me;
+            return (Frame) me;
         }
 
         if (me == null) {

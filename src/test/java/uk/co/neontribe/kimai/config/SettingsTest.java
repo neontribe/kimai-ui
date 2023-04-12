@@ -1,16 +1,13 @@
 package uk.co.neontribe.kimai.config;
 
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.Assertions;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Properties;
-import java.util.Set;
 
 import static org.junit.Assert.assertThrows;
 
