@@ -41,6 +41,14 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         this.activity.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.duration = new DurationPanel();
 
+        this.customer.setFixedCellWidth(240);
+        this.project.setFixedCellWidth(240);
+        this.activity.setFixedCellWidth(240);
+
+        this.customer.setVisibleRowCount(13);
+        this.project.setVisibleRowCount(13);
+        this.activity.setVisibleRowCount(13);
+
         this.customer.setSelectedIndex(-1);
 
         GridBagConstraints c = new GridBagConstraints();
@@ -179,20 +187,6 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
 
         this.add(component, c);
 
-    }
-
-    /**
-     * Temp method, for deving
-     */
-    public static void main(String[] args) throws ConfigNotInitialisedException, IOException {
-        JPanel config = new TimeEntryPanel();
-        JFrame frame = new JFrame("TimeEntryPanel");
-        frame.add(config);
-        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        // frame.setSize(1024,768);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     @Override
