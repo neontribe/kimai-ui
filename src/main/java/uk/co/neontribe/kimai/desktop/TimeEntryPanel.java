@@ -163,6 +163,16 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         }
     }
 
+    // adds desired JComponent to specific row/column in GridBagLayout
+    private void addToGridBagLayout(int x, int y, GridBagConstraints c, JComponent component) {
+
+        c.gridx = x;
+        c.gridy = y;
+
+        this.add(component, c);
+
+    }
+
     /**
      * Temp method, for deving
      */
