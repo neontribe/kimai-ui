@@ -24,7 +24,6 @@ public class Activity extends Entity {
         return id;
     }
 
-
     private int project;
 
 

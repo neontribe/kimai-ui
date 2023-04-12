@@ -2,12 +2,8 @@ package uk.co.neontribe.kimai.desktop;
 
 import uk.co.neontribe.kimai.config.Settings;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
