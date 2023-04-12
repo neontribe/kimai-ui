@@ -1,21 +1,14 @@
 package uk.co.neontribe.kimai.api;
 
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.AllArgsConstructor;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.config.Settings;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.List;
-
-import com.google.gson.Gson;
 
 @AllArgsConstructor
 public class Customer extends Entity {
