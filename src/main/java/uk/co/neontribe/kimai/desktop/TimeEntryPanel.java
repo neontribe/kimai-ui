@@ -8,6 +8,7 @@ import javafx.scene.layout.Border;
 
 import uk.co.neontribe.kimai.api.*;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
+import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
 
@@ -15,8 +16,6 @@ import javax.swing.border.EmptyBorder;
 
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TimeEntryPanel extends JPanel implements ActionListener {
+
+    Component topLevelFrame;
 
     private final JList<Customer> customer;
     private final JList<Project> project;
@@ -123,77 +124,120 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         c.gridwidth = 3;
         this.add(statusPanel, c);
 
-        customer.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent listSelectionEvent) {
-                updateProjectCombo();
-            }
-        });
-        project.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent listSelectionEvent) {
-                updateActivityCombo();
-            }
-        });
+        customer.addListSelectionListener(listSelectionEvent -> updateProjectCombo());
+        project.addListSelectionListener(listSelectionEvent -> updateActivityCombo());
+        activity.addListSelectionListener(listSelectionEvent -> saveLastAccessedActivity());
 
-        this.customer.setSelectedIndex(1);
+        try {
+            // If we have a last selected, then try and find it, and set it
+            int customerId = Settings.getInstance().getLastAccessed().getCustomer();
+            if (customerId >= 0) {
+                ListModel<Customer> model = customer.getModel();
+                for (int i=0; i < model.getSize(); i++) {
+                    if (model.getElementAt(i).getId() == customerId) {
+                        this.customer.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();;
+        }
+
         updateProjectCombo();
     }
 
-    public void updateProjectCombo() {
-        Component topLevelFrame = ConfigPanel.getParentFrame(this);
-        if (topLevelFrame != null) {
-            topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    private void _setCursor(Cursor cursor) {
+        if (topLevelFrame == null) {
+            this.topLevelFrame = ConfigPanel.getParentFrame(this);
         }
-        Customer selectedCustomer = (Customer) customer.getSelectedValue();
-        if (selectedCustomer != null) {
-            try {
+        if (topLevelFrame != null) {
+            topLevelFrame.setCursor(cursor);
+        }
+    }
+
+    private void updateProjectCombo() {
+        Settings settings;
+        try {
+            settings = Settings.getInstance();
+            this._setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            Customer selectedCustomer = customer.getSelectedValue();
+            if (selectedCustomer != null) {
+                settings.setLastAccessedCustomer(selectedCustomer);
                 Project[] projects = Project.getProjects(selectedCustomer.getId());
                 DefaultComboBoxModel<Project> model = new DefaultComboBoxModel<>(projects);
                 project.setModel(model);
-            } catch (Exception e) {
-                if (topLevelFrame != null) {
-                    topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
-                throw new RuntimeException(e);
             }
+            // If we have a last selected, then try and find it, and set it
+            int projectId = Settings.getInstance().getLastAccessed().getProject();
+            if (projectId >= 0) {
+                ListModel<Project> model = project.getModel();
+                for (int i=0; i < model.getSize(); i++) {
+                    if (model.getElementAt(i).getId() == projectId) {
+                        this.project.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
+            Settings.save(settings);
+        } catch (IOException e) {
+            this._setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            throw new RuntimeException(e);
         }
-        if (topLevelFrame != null) {
-            topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        this._setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
+
+    private void updateActivityCombo() {
+        Settings settings;
+        try {
+            settings = Settings.getInstance();
+            this._setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            Project selectedProject = project.getSelectedValue();
+            if (selectedProject != null) {
+                settings.setLastAccessedProject(selectedProject);
+                Activity[] activities = Activity.getActivities(selectedProject.getId());
+                DefaultComboBoxModel<Activity> model = new DefaultComboBoxModel<>(activities);
+                activity.setModel(model);
+            }
+            // If we have a last selected, then try and find it, and set it
+            int activityId = Settings.getInstance().getLastAccessed().getActivity();
+            if (activityId >= 0) {
+                ListModel<Activity> model = activity.getModel();
+                for (int i=0; i < model.getSize(); i++) {
+                    if (model.getElementAt(i).getId() == activityId) {
+                        this.activity.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
+            Settings.save(settings);
+        } catch (IOException e) {
+            this._setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            throw new RuntimeException(e);
+        }
+        this._setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
+
+    private void saveLastAccessedActivity() {
+        Settings settings;
+        try {
+            settings = Settings.getInstance();
+            Activity selectedActivity = activity.getSelectedValue();
+            if (selectedActivity != null) {
+                settings.setLastAccessedActivity(selectedActivity);
+            }
+            Settings.save(settings);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private JComponent addBorder(String title, JComponent gridComponent) {
-
         LineBorder lineBorder = new LineBorder(Color.GRAY, 1, true);
         TitledBorder clientTitle = new TitledBorder(lineBorder, title);
         gridComponent.setBorder(clientTitle);
 
         return gridComponent;
-
-    }
-
-    public void updateActivityCombo() {
-        Component topLevelFrame = ConfigPanel.getParentFrame(this);
-        if (topLevelFrame != null) {
-            topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        }
-        Project selectedProject = (Project) this.project.getSelectedValue();
-        if (selectedProject != null) {
-            try {
-                Activity[] activities = Activity.getActivities(selectedProject.getId());
-                DefaultComboBoxModel<Activity> model = new DefaultComboBoxModel<>(activities);
-                activity.setModel(model);
-            } catch (Exception e) {
-                if (topLevelFrame != null) {
-                    topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
-                throw new RuntimeException(e);
-            }
-        }
-        if (topLevelFrame != null) {
-            topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
     }
 
     // adds desired JComponent to specific row/column in GridBagLayout
@@ -231,7 +275,6 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
             cal.setTime(_begin);
             Date _end = new Date(cal.getTimeInMillis() + (60L * minutes * 1000));
 
-
             TimeSheet timesheet = new TimeSheet(
                     _notes,
                     -1,
@@ -240,8 +283,6 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                     _project,
                     _activity,
                     user);
-
-            TimeSheet timesheet = new TimeSheet(_notes, -1, _begin, _end, _project, _activity, user);
 
             Component topLevelFrame = ConfigPanel.getParentFrame(this);
             if (topLevelFrame != null) {

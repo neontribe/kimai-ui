@@ -12,17 +12,6 @@ import java.util.List;
 
 @AllArgsConstructor
 public class Customer extends Entity {
-    private String name;
-    private int id;
-
-    public String getName() {
-        return name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
 
     public static Customer[] getCustomers() throws ConfigNotInitialisedException, IOException {
         Settings settings = Settings.getInstance();

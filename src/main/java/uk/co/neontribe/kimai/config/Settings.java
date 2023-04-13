@@ -2,12 +2,14 @@ package uk.co.neontribe.kimai.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.yaml.snakeyaml.Yaml;
+import uk.co.neontribe.kimai.api.Activity;
+import uk.co.neontribe.kimai.api.Customer;
+import uk.co.neontribe.kimai.api.LastAccessed;
+import uk.co.neontribe.kimai.api.Project;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Creates a singleton reference to our config and settings
@@ -83,6 +85,10 @@ public class Settings {
         Settings.kimaiSettings.setKimaiUsername((String) data.getOrDefault("kimaiUsername", ""));
         Settings.kimaiSettings.setKimaiPassword((String) data.getOrDefault("kimaiPassword", ""));
 
+        Settings.kimaiSettings.lastAccessed.setCustomer((Integer) data.getOrDefault("last-accessed-customer", -1));
+        Settings.kimaiSettings.lastAccessed.setProject((Integer) data.getOrDefault("last-accessed-project", -1));
+        Settings.kimaiSettings.lastAccessed.setActivity((Integer) data.getOrDefault("last-accessed-activity", -1));
+
         Object rawCustomers = data.get("customers");
         if (rawCustomers instanceof ArrayList<?>) {
             ArrayList<String> customers = (ArrayList<String>) rawCustomers;
@@ -118,6 +124,8 @@ public class Settings {
     private String kimaiPassword = "";
     private String[] customers = {};
 
+    private LastAccessed lastAccessed = new LastAccessed();
+
     public String getKimaiUri() {
         return kimaiUri;
     }
@@ -148,12 +156,37 @@ public class Settings {
         this.customers = customers;
     }
 
-    public static boolean save(Settings settings) throws FileNotFoundException, SecurityException {
+    public LastAccessed getLastAccessed() {
+        return lastAccessed;
+    }
+
+    public void setLastAccessedCustomer(Customer customer) {
+        this.lastAccessed.setCustomer(customer.getId());
+    }
+
+    public void setLastAccessedProject(Project project) {
+        this.lastAccessed.setProject(project.getId());
+    }
+
+    public void setLastAccessedActivity(Activity activity) {
+        this.lastAccessed.setActivity(activity.getId());
+    }
+
+    public void setLastAccessed(LastAccessed lastAccessed) {
+        this.lastAccessed = lastAccessed;
+    }
+
+    public static void save(Settings settings) throws FileNotFoundException, SecurityException {
         Map<String, Object> kimai = new HashMap<String, Object>();
         kimai.put("kimaiUri", settings.getKimaiUri());
         kimai.put("kimaiUsername", settings.getKimaiUsername());
         kimai.put("kimaiPassword", settings.getKimaiPassword());
         kimai.put("customers", settings.getCustomers());
+
+        // TODO refacor this into a nested array. I don't understand YAML serializer in Java well enough
+        kimai.put("last-accessed-customer", settings.getLastAccessed().getCustomer());
+        kimai.put("last-accessed-project", settings.getLastAccessed().getProject());
+        kimai.put("last-accessed-activity", settings.getLastAccessed().getActivity());
 
         Yaml yaml = new Yaml();
         PrintWriter writer = new PrintWriter(Settings.getConfigFile());
@@ -162,7 +195,5 @@ public class Settings {
         writer.close();
 
         reset();
-
-        return true;
     }
 }
