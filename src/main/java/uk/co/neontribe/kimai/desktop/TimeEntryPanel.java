@@ -102,6 +102,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         activity.addListSelectionListener(listSelectionEvent -> saveLastAccessedActivity());
 
         try {
+            // If we have a last selected, then try and find it, and set it
             int customerId = Settings.getInstance().getLastAccessed().getCustomer();
             if (customerId >= 0) {
                 ListModel<Customer> model = customer.getModel();
@@ -118,9 +119,6 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
 
         updateProjectCombo();
     }
-
-//    private void setSelectedItem(int index, JList<Entity> list) {
-//    }
 
     private void _setCursor(Cursor cursor) {
         if (topLevelFrame == null) {
@@ -143,6 +141,17 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                 DefaultComboBoxModel<Project> model = new DefaultComboBoxModel<>(projects);
                 project.setModel(model);
             }
+            // If we have a last selected, then try and find it, and set it
+            int projectId = Settings.getInstance().getLastAccessed().getProject();
+            if (projectId >= 0) {
+                ListModel<Project> model = project.getModel();
+                for (int i=0; i < model.getSize(); i++) {
+                    if (model.getElementAt(i).getId() == projectId) {
+                        this.project.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
             Settings.save(settings);
         } catch (IOException e) {
             this._setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -162,6 +171,17 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                 Activity[] activities = Activity.getActivities(selectedProject.getId());
                 DefaultComboBoxModel<Activity> model = new DefaultComboBoxModel<>(activities);
                 activity.setModel(model);
+            }
+            // If we have a last selected, then try and find it, and set it
+            int activityId = Settings.getInstance().getLastAccessed().getActivity();
+            if (activityId >= 0) {
+                ListModel<Activity> model = activity.getModel();
+                for (int i=0; i < model.getSize(); i++) {
+                    if (model.getElementAt(i).getId() == activityId) {
+                        this.activity.setSelectedIndex(i);
+                        break;
+                    }
+                }
             }
             Settings.save(settings);
         } catch (IOException e) {
