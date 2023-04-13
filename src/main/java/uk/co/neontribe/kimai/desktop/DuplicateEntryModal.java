@@ -1,6 +1,5 @@
 package uk.co.neontribe.kimai.desktop;
 
-import uk.co.neontribe.kimai.api.TimeSheet;
 import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;

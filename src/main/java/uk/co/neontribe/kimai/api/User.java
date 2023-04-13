@@ -7,7 +7,6 @@ import uk.co.neontribe.kimai.config.Settings;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 
 @AllArgsConstructor
 public class User extends Entity {

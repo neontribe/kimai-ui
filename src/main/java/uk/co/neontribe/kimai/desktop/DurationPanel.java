@@ -38,7 +38,7 @@ public class DurationPanel extends JPanel implements ActionListener {
         fourHours.addActionListener(this);
         oneDay.addActionListener(this);
 
-        JPanel quickPanel = new JPanel(new GridLayout(2,3));
+        JPanel quickPanel = new JPanel(new GridLayout(2, 3));
         quickPanel.add(fifteenMinutes);
         quickPanel.add(thirtyMinutes);
         quickPanel.add(oneHour);

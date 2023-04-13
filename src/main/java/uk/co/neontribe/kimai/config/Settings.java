@@ -7,7 +7,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,12 +30,15 @@ public class Settings {
     private static Settings kimaiSettings;
 
     static {
-        Dotenv dotenv = Dotenv.configure()
-                .ignoreIfMalformed()
-                .ignoreIfMissing()
-                .load();
+
+        Dotenv dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
         CONFIG_DIR = dotenv.get("CONFIG_DIR", ".config/neontribe/kimai-ui");
         CONFIG_FILENAME = dotenv.get("CONFIG_FILENAME", "config.yml");
+    }
+
+    public static void reset() {
+        Settings.kimaiSettings = null;
+
     }
 
     /**
@@ -126,9 +128,7 @@ public class Settings {
         return kimaiUri;
     }
 
-    public void setKimaiUri(String kimaiUri) {
-        this.kimaiUri = kimaiUri;
-    }
+    public void setKimaiUri(String kimaiUri) {this.kimaiUri = kimaiUri;}
 
     public String getKimaiUsername() {
         return kimaiUsername;
@@ -180,6 +180,8 @@ public class Settings {
         yaml.dump(kimai, writer);
         writer.flush();
         writer.close();
+
+        reset();
 
         return true;
     }
