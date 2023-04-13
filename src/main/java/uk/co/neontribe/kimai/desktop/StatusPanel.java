@@ -1,5 +1,6 @@
 package uk.co.neontribe.kimai.desktop;
 
+import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.config.Settings;
 
 import javax.imageio.ImageIO;
@@ -29,7 +30,14 @@ public class StatusPanel extends JPanel {
         ImageIcon newCogIcon = new ImageIcon(newCogImg);
         settings.setIcon(newCogIcon);
 
-        settings.addActionListener(actionEvent -> openConfigDialog());
+        settings.addActionListener(actionEvent -> {
+            try {
+                openConfigDialog();
+            } catch (ConfigNotInitialisedException | IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
         buttons.add(settings, BorderLayout.EAST);
 
         try {
@@ -66,7 +74,7 @@ public class StatusPanel extends JPanel {
         this.statusBar.setText(text);
     }
 
-    private void openConfigDialog() {
+    private void openConfigDialog() throws ConfigNotInitialisedException, IOException {
         try {
             ConfigPanel.makeFrame(this, Settings.getInstance()).setVisible(true);
         } catch (IOException e) {

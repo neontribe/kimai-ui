@@ -5,6 +5,7 @@ import org.jdatepicker.JDatePanel;
 import javafx.scene.layout.Border;
 import uk.co.neontribe.kimai.api.*;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
+import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -34,6 +35,13 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
     private final StatusPanel statusPanel;
 
     public TimeEntryPanel() throws IOException, ConfigNotInitialisedException {
+
+        Settings settings = Settings.getInstance();
+        Object filteredCustomers = settings.getFilteredCustomers();
+        String convertedToString = String.valueOf(filteredCustomers);
+
+        System.out.println(convertedToString);
+
         this.setBackground(Color.WHITE);
         this.setLayout(new GridBagLayout());
 
