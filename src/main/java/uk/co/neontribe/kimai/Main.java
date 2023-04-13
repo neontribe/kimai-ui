@@ -27,6 +27,7 @@ public class Main {
         // UIManager.setLookAndFeel ("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         frame = new KimaiUiFrame();
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        frame.setSize(800, 600);
         frame.setVisible(true);
 
         if (!SystemTray.isSupported()) {
