@@ -30,8 +30,6 @@ mvn install
 Start a local kimai instance to dev against:
 
 ```bash
-git clone git@github.com:tobybatch/kimai2.git
-cd kimai2
 docker-compose up -d
 ```
 
@@ -46,4 +44,16 @@ kimai:
   uername: superadmin
   password: changemeplease
 EOF
+```
+
+## Build
+
+```bash
+mvn clean compile assembly:single
+```
+
+## Run
+
+```bash
+java -jar target/kimai-ui-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
