@@ -4,13 +4,17 @@ import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.config.Settings;
 import uk.co.neontribe.kimai.desktop.KimaiUiFrame;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
 
 public class Main {
     static KimaiUiFrame frame;
@@ -22,7 +26,7 @@ public class Main {
      * @throws ConfigNotInitialisedException Thrown when config location cannot be created.
      * @throws IOException                   Thrown if we can't read from the file system
      */
-    public static void main(String[] args) throws ConfigNotInitialisedException, IOException, UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException, AWTException {
+    public static void main(String[] args) throws IOException {
         // Create a new application frame and show it.
         // UIManager.setLookAndFeel ("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         frame = new KimaiUiFrame();
@@ -36,9 +40,6 @@ public class Main {
         }
 
         SystemTray tray = SystemTray.getSystemTray();
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-
-        Image image = toolkit.getImage("trayIcon.jpg");
         PopupMenu menu = new PopupMenu();
         MenuItem messageItem = new MenuItem("Open Kimai");
         messageItem.addActionListener(new ActionListener() {
@@ -63,15 +64,21 @@ public class Main {
         });
         menu.add(closeItem);
 
-        TrayIcon icon = new TrayIcon(image, "Kimai Tool", menu);
-        icon.setImageAutoSize(true);
-        icon.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                frame.setVisible(true);
-            }
-        });
-
-        tray.add(icon);
+        TrayIcon icon = null;
+        try {
+            InputStream is = new BufferedInputStream(Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream("images/kimai.png")));
+            Image image = ImageIO.read(is);
+            icon = new TrayIcon(image, "Kimai Tool", menu);
+            icon.setImageAutoSize(true);
+            icon.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    frame.setVisible(true);
+                }
+            });
+            tray.add(icon);
+        } catch (IOException | AWTException e) {
+            e.printStackTrace();
+        }
     }
 }
