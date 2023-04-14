@@ -4,8 +4,12 @@ import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Objects;
+import javax.imageio.ImageIO;
 
 public class StatusPanel extends JPanel {
 
@@ -17,12 +21,15 @@ public class StatusPanel extends JPanel {
 
         JButton settings = new JButton();
 
-        ImageIcon cogIcon = new ImageIcon("Images/cog.png");
-        Image cogImg = cogIcon.getImage();
-
-        Image newCogImg = cogImg.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
-
-        ImageIcon newCogIcon = new ImageIcon(newCogImg);
+        ImageIcon newCogIcon = null;
+        try {
+            InputStream is = new BufferedInputStream(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("images/cog.png")));
+            Image cogImg = ImageIO.read(is);
+            Image newCogImg = cogImg.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            newCogIcon = new ImageIcon(newCogImg);
+        } catch (IOException|NullPointerException e) {
+            settings.setText("...");
+        }
         settings.setIcon(newCogIcon);
 
         settings.addActionListener(actionEvent -> openConfigDialog());

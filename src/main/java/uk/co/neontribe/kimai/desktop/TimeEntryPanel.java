@@ -9,8 +9,6 @@ import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
 
-import javax.swing.border.EmptyBorder;
-
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -240,16 +238,6 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         gridComponent.setBorder(clientTitle);
 
         return gridComponent;
-    }
-
-    // adds desired JComponent to specific row/column in GridBagLayout
-    private void addToGridBagLayout(int x, int y, GridBagConstraints c, JComponent component) {
-
-        c.gridx = x;
-        c.gridy = y;
-
-        this.add(component, c);
-
     }
 
     @Override
