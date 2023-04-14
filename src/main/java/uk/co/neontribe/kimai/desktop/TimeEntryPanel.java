@@ -2,17 +2,11 @@ package uk.co.neontribe.kimai.desktop;
 
 import org.jdatepicker.JDatePanel;
 
-
-import javafx.scene.layout.Border;
-
-
 import uk.co.neontribe.kimai.api.*;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
-
-import javax.swing.border.EmptyBorder;
 
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -240,16 +234,6 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         return gridComponent;
     }
 
-    // adds desired JComponent to specific row/column in GridBagLayout
-    private void addToGridBagLayout(int x, int y, GridBagConstraints c, JComponent component) {
-
-        c.gridx = x;
-        c.gridy = y;
-
-        this.add(component, c);
-
-    }
-
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         // TODO Better error handling and better feedback
@@ -277,7 +261,6 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
 
             TimeSheet timesheet = new TimeSheet(
                     _notes,
-                    -1,
                     _begin,
                     _end,
                     _project,
