@@ -3,9 +3,6 @@ package uk.co.neontribe.kimai.desktop;
 import org.jdatepicker.JDatePanel;
 
 
-import javafx.scene.layout.Border;
-
-
 import uk.co.neontribe.kimai.api.*;
 import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.config.Settings;
@@ -74,6 +71,8 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         c.ipadx = 5;
         c.ipady = 5;
         c.gridwidth = 1;
+        c.weightx = 1;
+        c.weighty = 1000;
         c.insets = new Insets(5, 5, 5, 5);
         c.fill = GridBagConstraints.BOTH;
 
@@ -90,11 +89,13 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         c.gridx = 0;
         c.gridy = 2;
         c.gridwidth = 2;
+        c.weighty = 1;
         this.add(this.duration, c);
 
         c.gridx = 0;
         c.gridy = 3;
         c.gridwidth = 2;
+        c.weighty = 2;
         notes = new JTextArea();
         JScrollPane notesPane = new JScrollPane(notes);
 
@@ -115,6 +116,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         c.gridy = 4;
         c.gridheight = 1;
         c.gridwidth = 3;
+        c.weighty = 1;
         this.add(actionPanel, c);
 
         statusPanel = new StatusPanel();
@@ -277,7 +279,6 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
 
             TimeSheet timesheet = new TimeSheet(
                     _notes,
-                    -1,
                     _begin,
                     _end,
                     _project,
