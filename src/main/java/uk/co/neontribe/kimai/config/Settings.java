@@ -32,6 +32,7 @@ public class Settings {
     private static Settings kimaiSettings;
 
     static {
+
         Dotenv dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
         CONFIG_DIR = dotenv.get("CONFIG_DIR", ".config/neontribe/kimai-ui");
         CONFIG_FILENAME = dotenv.get("CONFIG_FILENAME", "config.yml");
@@ -39,14 +40,17 @@ public class Settings {
 
     public static void reset() {
         Settings.kimaiSettings = null;
+
     }
 
     /**
      * Get a singleton instance of our settings object.
      *
      * @return Settings
-     * @throws ConfigNotInitialisedException Thrown when config location cannot be created.
-     * @throws IOException                   Thrown if we can't read from the file system
+     * @throws ConfigNotInitialisedException Thrown when config location cannot be
+     *                                       created.
+     * @throws IOException                   Thrown if we can't read from the file
+     *                                       system
      */
     public static Settings getInstance() throws IOException, ConfigNotInitialisedException {
         // If we have a (static) singleton instantiated then exit early, return it.
@@ -62,7 +66,8 @@ public class Settings {
             }
         }
 
-        // If the config file does not exist throw a ConfigNotInitialisedException error, this can be caught and handled
+        // If the config file does not exist throw a ConfigNotInitialisedException
+        // error, this can be caught and handled
         File settingsFile = Settings.getConfigFile();
         if (!settingsFile.exists()) {
             throw new ConfigNotInitialisedException("Config not initialised");
@@ -122,6 +127,7 @@ public class Settings {
     private String kimaiUri = "";
     private String kimaiUsername = "";
     private String kimaiPassword = "";
+    private Object kimaiFilteredCustomers = null;
     private String[] customers = {};
 
     private LastAccessed lastAccessed = new LastAccessed();
@@ -146,6 +152,18 @@ public class Settings {
 
     public void setKimaiPassword(String kimaiPassword) {
         this.kimaiPassword = kimaiPassword;
+    }
+
+    public void setFilteredCustomers(Object kimaiFilteredCustomers) {
+
+        this.kimaiFilteredCustomers = kimaiFilteredCustomers;
+        System.out.println("this has run");
+        System.out.println(this.kimaiFilteredCustomers);
+    }
+
+    public Object getFilteredCustomers() {
+        System.out.println(kimaiFilteredCustomers);
+        return kimaiFilteredCustomers;
     }
 
     public String[] getCustomers() {
@@ -181,6 +199,8 @@ public class Settings {
         kimai.put("kimaiUri", settings.getKimaiUri());
         kimai.put("kimaiUsername", settings.getKimaiUsername());
         kimai.put("kimaiPassword", settings.getKimaiPassword());
+        kimai.put("filteredCustomers", settings.getFilteredCustomers());
+
         kimai.put("customers", settings.getCustomers());
 
         // TODO refacor this into a nested array. I don't understand YAML serializer in Java well enough
