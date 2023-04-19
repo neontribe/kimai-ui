@@ -14,9 +14,12 @@ public class DuplicateEntryModal extends JDialog implements ActionListener {
 
     public static final String LOG_ANYWAY = "Log anyway";
 
+    private Settings settings;
     private boolean shouldProceed = false;
 
-    public DuplicateEntryModal() {
+    public DuplicateEntryModal(Settings settings) {
+        this.settings = settings;
+
         JButton proceed = new JButton(LOG_ANYWAY);
         JButton cancel = new JButton("Cancel");
         JButton launchKimai = new JButton("Open Kimai");
@@ -60,20 +63,15 @@ public class DuplicateEntryModal extends JDialog implements ActionListener {
         launchKimai.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    Settings setting = Settings.getInstance();
-                    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-                    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-                        try {
-                            shouldProceed = false;
-                            setVisible(false);
-                            desktop.browse(new URL(setting.getKimaiUri()).toURI());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+                if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+                    try {
+                        shouldProceed = false;
+                        setVisible(false);
+                        desktop.browse(new URL(settings.getKimaiUri()).toURI());
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
                 }
                 dispose();
             }

@@ -57,7 +57,7 @@ class SettingsTest {
         settings.setKimaiPassword("savepass");
         settings.setCustomers(CUSTOMERS);
 
-        Settings.save(settings);
+        Settings.saveAndReset(settings);
 
         Settings _settings = Settings.getInstance();
         Assertions.assertEquals("http://new.url.com", _settings.getKimaiUri());

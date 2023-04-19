@@ -4,6 +4,7 @@ import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,13 +14,15 @@ import javax.imageio.ImageIO;
 
 public class StatusPanel extends JPanel {
 
+    Settings settings;
     JTextField statusBar;
+    JButton settingsButton = new JButton();
+    JButton openKimai = new JButton();
 
-    public StatusPanel() {
 
+    public StatusPanel(Settings settings) {
+        this.settings = settings;
         JPanel buttons = new JPanel(new BorderLayout(10, 0));
-
-        JButton settings = new JButton();
 
         ImageIcon newCogIcon = null;
         try {
@@ -28,15 +31,14 @@ public class StatusPanel extends JPanel {
             Image newCogImg = cogImg.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             newCogIcon = new ImageIcon(newCogImg);
         } catch (IOException|NullPointerException e) {
-            settings.setText("...");
+            settingsButton.setText("...");
         }
-        settings.setIcon(newCogIcon);
+        settingsButton.setIcon(newCogIcon);
 
-        settings.addActionListener(actionEvent -> openConfigDialog());
-        buttons.add(settings, BorderLayout.EAST);
+        buttons.add(settingsButton, BorderLayout.EAST);
 
         try {
-            JButton openKimai = new JButton(Settings.getInstance().getKimaiUri());
+            openKimai = new JButton();
             openKimai.setForeground(Color.BLUE);
             openKimai.setBorder(null);
             openKimai.setOpaque(false);
@@ -45,7 +47,7 @@ public class StatusPanel extends JPanel {
             openKimai.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             openKimai.addActionListener(actionEvent -> {
                 try {
-                    openWebpage(new URL(Settings.getInstance().getKimaiUri()));
+                    openWebpage(new URL(this.settings.getKimaiUri()));
                 } catch (IOException e) {
                     statusBar.setText(e.getMessage());
                 }
@@ -65,17 +67,18 @@ public class StatusPanel extends JPanel {
         this.add(statusBar, BorderLayout.CENTER);
     }
 
+    public void setOpeKimaiUrl(String url) {
+        this.openKimai.setText(url);
+    }
+
     public void setText(String text) {
         this.statusBar.setText(text);
     }
 
-    private void openConfigDialog() {
-        try {
-            ConfigPanel.makeFrame(this, Settings.getInstance()).setVisible(true);
-        } catch (IOException e) {
-            ConfigPanel.makeFrame(this, new Settings()).setVisible(true);
-        }
+    public void addConfigListener(ActionListener actionListener) {
+        settingsButton.addActionListener(actionListener);
     }
+
 
     public static void openWebpage(URL url) {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;

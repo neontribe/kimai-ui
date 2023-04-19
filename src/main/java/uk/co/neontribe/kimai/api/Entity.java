@@ -26,8 +26,8 @@ public abstract class Entity {
         return id;
     }
 
-    public static HttpURLConnection makeHttpConnection(URL url) throws IOException {
-        Settings settings = Settings.getInstance();
+    public static HttpURLConnection makeHttpConnection(URL url, Settings settings) throws IOException {
+        System.out.println("makeHttpConnection: " + settings.getKimaiUsername() + ", " + settings.getKimaiPassword() + ", " + ", " + settings.getKimaiUri());
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestProperty("X-AUTH-USER", settings.getKimaiUsername());
         con.setRequestProperty("X-AUTH-TOKEN", settings.getKimaiPassword());
@@ -36,11 +36,11 @@ public abstract class Entity {
         return con;
     }
 
-    public static String getApi(URL url) throws ConfigNotInitialisedException, IOException {
-        return Entity.getApi(url, null);
+    public static String getApi(URL url, Settings settings) throws IOException {
+        return Entity.getApi(url, settings, null);
     }
 
-    public static String getApi(URL url, List<Map.Entry<String, String>> parameters) throws ConfigNotInitialisedException, IOException {
+    public static String getApi(URL url, Settings settings, List<Map.Entry<String, String>> parameters) throws IOException {
         if (parameters != null && parameters.size() > 0) {
             StringBuilder query = new StringBuilder();
             for (Map.Entry<String, String> parameter : parameters) {
@@ -48,13 +48,13 @@ public abstract class Entity {
             }
             url = new URL(url + "?" + query);
         }
-        HttpURLConnection con = makeHttpConnection(url);
+        HttpURLConnection con = makeHttpConnection(url, settings);
 
         return callApi(con);
     }
 
-    public static String postApi(URL url, String body) throws ConfigNotInitialisedException, IOException {
-        HttpURLConnection con = makeHttpConnection(url);
+    public static String postApi(URL url, Settings settings, String body) throws IOException {
+        HttpURLConnection con = makeHttpConnection(url, settings);
         con.setDoOutput(true);
         con.setRequestProperty("Content-Type", "application/json");
         OutputStream os = con.getOutputStream();

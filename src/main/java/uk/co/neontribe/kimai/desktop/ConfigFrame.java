@@ -8,47 +8,56 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ConfigPanel extends JPanel implements ActionListener {
+public class ConfigFrame extends JDialog implements ActionListener {
 
-    private static JDialog configFrame;
+    private static ConfigFrame configFrame;
+    private Settings settings;
 
     private final JTextField uri;
     private final JTextField username;
     private final JTextField password;
+//    private final JTextField fontSize;
 
-    public ConfigPanel(Settings settings) {
+    public ConfigFrame(Settings settings) {
+        this.settings = settings;
         this.setLayout(new BorderLayout(5, 5));
-        this.setBorder(new EmptyBorder(5, 5, 5, 5));
+        this.setTitle("Settings");
 
         this.add(new Header("Config Panel"), BorderLayout.NORTH);
 
 
         JPanel gridRight = new JPanel(new GridLayout(0, 1, 5, 5));
-        gridRight.add(uri = new JTextField(settings.getKimaiUri(), 30));
-        gridRight.add(username = new JTextField(settings.getKimaiUsername(), 30));
-        gridRight.add(password = new JTextField(settings.getKimaiPassword(), 30));
+        gridRight.add(uri = new JTextField(this.settings.getKimaiUri(), 30));
+        gridRight.add(username = new JTextField(this.settings.getKimaiUsername(), 30));
+        gridRight.add(password = new JPasswordField("", 30));
+//        gridRight.add(fontSize = new JTextField("", settings.getFontSize()));
         this.add(gridRight, BorderLayout.CENTER);
 
         JPanel gridLeft = new JPanel(new GridLayout(0, 1, 5, 5));
         gridLeft.add(new JLabel("Your Kimai Uri:"));
         gridLeft.add(new JLabel("Username:"));
         gridLeft.add(new JLabel("Password:"));
+//        gridLeft.add(new JLabel("Font size:"));
         this.add(gridLeft, BorderLayout.WEST);
 
         JButton save = new JButton("Save");
         this.add(save, BorderLayout.SOUTH);
         save.addActionListener(this);
-
     }
 
-    public static JDialog makeFrame(Component parent, Settings settings) {
+    public Settings getSettings() {
+        return this.settings;
+    }
+
+    public static ConfigFrame makeFrame(Component parent, Settings settings) {
         if (configFrame == null) {
-            Frame topWindow = ConfigPanel.getParentFrame(parent);
-            configFrame = new JDialog(topWindow, "Settings");
-            configFrame.add(new ConfigPanel(settings), BorderLayout.CENTER);
+            Frame topWindow = ConfigFrame.getParentFrame(parent);
+            configFrame = new ConfigFrame(settings);
             configFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
             configFrame.pack();
             configFrame.setLocationRelativeTo(topWindow);
+            configFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            configFrame.setModal(true);
         }
         return configFrame;
     }
@@ -68,10 +77,12 @@ public class ConfigPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            Settings settings = new Settings();
             settings.setKimaiUri(this.uri.getText());
             settings.setKimaiUsername(this.username.getText());
-            settings.setKimaiPassword(this.password.getText());
+            if (this.password.getText().length() > 0) {
+                settings.setKimaiPassword(this.password.getText());
+            }
+//            settings.setFontSize(Integer.parseInt(this.fontSize.getText()));
             configFrame.setVisible(false);
         } catch (Exception ex) {
             System.err.println("Unreachable");
