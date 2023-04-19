@@ -49,13 +49,12 @@ public class TimeSheet extends Entity {
         return user;
     }
 
-    public static String postTimeSheet(TimeSheet timeSheet) throws IOException {
-        Settings settings = Settings.getInstance();
+    public static String postTimeSheet(Settings settings, TimeSheet timeSheet) throws IOException {
         URL url = new URL(settings.getKimaiUri() + "/api/timesheets");
 
-        TimeSheet[] timesheets = getTimeSheets(timeSheet.project, timeSheet.activity, timeSheet.begin, timeSheet.end);
+        TimeSheet[] timesheets = getTimeSheets(settings, timeSheet.project, timeSheet.activity, timeSheet.begin, timeSheet.end);
         if (timesheets.length > 0) {
-            DuplicateEntryModal duplicateEntryModal = new DuplicateEntryModal();
+            DuplicateEntryModal duplicateEntryModal = new DuplicateEntryModal(settings);
             duplicateEntryModal.setVisible(true);
             if (!duplicateEntryModal.getShouldProceed()) {
                 return null;
@@ -69,11 +68,10 @@ public class TimeSheet extends Entity {
         Gson gson = builder.create();
         String postContent = gson.toJson(timeSheetDto);
 
-        return postApi(url, postContent);
+        return postApi(url, settings, postContent);
     }
 
-    public static TimeSheet[] getTimeSheets(int projectId, int activityId, Date begin, Date end) throws IOException {
-        Settings settings = Settings.getInstance();
+    public static TimeSheet[] getTimeSheets(Settings settings, int projectId, int activityId, Date begin, Date end) throws IOException {
         URL url = new URL(settings.getKimaiUri() + "/api/timesheets");
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
@@ -85,7 +83,7 @@ public class TimeSheet extends Entity {
         parameters.add(new AbstractMap.SimpleEntry<>("begin", simpleDateFormat.format(begin)));
         parameters.add(new AbstractMap.SimpleEntry<>("end", simpleDateFormat.format(end)));
 
-        String content = Entity.getApi(url, parameters);
+        String content = Entity.getApi(url, settings, parameters);
         Gson gson = new Gson();
         TypeToken<List<TimeSheet>> projectType = new TypeToken<List<TimeSheet>>() {
         };

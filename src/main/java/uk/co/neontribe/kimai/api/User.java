@@ -11,10 +11,9 @@ import java.net.URL;
 @AllArgsConstructor
 public class User extends Entity {
 
-    public static User getCurrentUser() throws IOException {
-        Settings settings = Settings.getInstance();
+    public static User getCurrentUser(Settings settings) throws IOException {
         URL url = new URL(settings.getKimaiUri() + "/api/users/me");
-        String content = Entity.getApi(url);
+        String content = Entity.getApi(url, settings);
         Gson gson = new Gson();
         TypeToken<User> userType = new TypeToken<User>() {
         };

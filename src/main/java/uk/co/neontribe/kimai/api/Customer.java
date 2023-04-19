@@ -13,10 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class Customer extends Entity {
 
-    public static Customer[] getCustomers() throws ConfigNotInitialisedException, IOException {
-        Settings settings = Settings.getInstance();
+    public static Customer[] getCustomers(Settings settings) throws IOException {
         URL url = new URL(settings.getKimaiUri() + "/api/customers");
-        String content = Entity.getApi(url);
+        String content = Entity.getApi(url, settings);
         Gson gson = new Gson();
         TypeToken<List<Customer>> customerType = new TypeToken<List<Customer>>() {
         };

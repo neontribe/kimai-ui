@@ -31,7 +31,8 @@ public class Main {
         // UIManager.setLookAndFeel ("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         frame = new KimaiUiFrame();
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        frame.setSize(800, 600);
+        // frame.setSize(800, 600);
+        frame.pack();
         frame.setVisible(true);
 
         if (!SystemTray.isSupported()) {
@@ -41,21 +42,21 @@ public class Main {
 
         SystemTray tray = SystemTray.getSystemTray();
         PopupMenu menu = new PopupMenu();
-        MenuItem messageItem = new MenuItem("Open Kimai");
-        messageItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Settings settings = Settings.getInstance();
-                    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-                    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-                        desktop.browse(new URL(settings.getKimaiUri()).toURI());
-                    }
-                } catch (IOException | URISyntaxException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
-        menu.add(messageItem);
+//        MenuItem messageItem = new MenuItem("Open Kimai");
+//        messageItem.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                try {
+//                    Settings settings = Settings.getInstance();
+//                    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+//                    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+//                        desktop.browse(new URL(settings.getKimaiUri()).toURI());
+//                    }
+//                } catch (IOException | URISyntaxException ex) {
+//                    throw new RuntimeException(ex);
+//                }
+//            }
+//        });
+//        menu.add(messageItem);
         MenuItem closeItem = new MenuItem("Close");
         closeItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -79,6 +80,15 @@ public class Main {
             tray.add(icon);
         } catch (IOException | AWTException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void changeFont(Component component, Font font) {
+        component.setFont(font);
+        if (component instanceof Container) {
+            for (Component child : ((Container) component).getComponents()) {
+                changeFont(child, font);
+            }
         }
     }
 }

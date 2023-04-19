@@ -20,10 +20,9 @@ public class Project extends Entity {
         return customer;
     }
 
-    public static Project[] getProjects(int id) throws ConfigNotInitialisedException, IOException {
-        Settings settings = Settings.getInstance();
+    public static Project[] getProjects(int id, Settings settings) throws IOException {
         URL url = new URL(settings.getKimaiUri() + "/api/projects");
-        String content = Entity.getApi(url);
+        String content = Entity.getApi(url, settings);
         Gson gson = new Gson();
         TypeToken<List<Project>> projectType = new TypeToken<List<Project>>() {
         };

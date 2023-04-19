@@ -7,6 +7,7 @@ import uk.co.neontribe.kimai.config.ConfigNotInitialisedException;
 import uk.co.neontribe.kimai.config.Settings;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -20,10 +21,9 @@ public class Activity extends Entity {
         return project;
     }
 
-    public static Activity[] getActivities(int id) throws ConfigNotInitialisedException, IOException {
-        Settings settings = Settings.getInstance();
+    public static Activity[] getActivities(int id, Settings settings) throws IOException {
         URL url = new URL(settings.getKimaiUri() + "/api/activities");
-        String content = Entity.getApi(url);
+        String content = Entity.getApi(url, settings);
         Gson gson = new Gson();
         TypeToken<List<Activity>> activityType = new TypeToken<List<Activity>>() {
         };

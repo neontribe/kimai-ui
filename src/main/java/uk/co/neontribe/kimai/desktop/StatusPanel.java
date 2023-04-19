@@ -14,13 +14,15 @@ import javax.imageio.ImageIO;
 
 public class StatusPanel extends JPanel {
 
+    Settings settings;
     JTextField statusBar;
-    JButton settings = new JButton();
+    JButton settingsButton = new JButton();
+    JButton openKimai = new JButton();
 
 
-    public StatusPanel() {
+    public StatusPanel(Settings settings) {
+        this.settings = settings;
         JPanel buttons = new JPanel(new BorderLayout(10, 0));
-
 
         ImageIcon newCogIcon = null;
         try {
@@ -29,14 +31,14 @@ public class StatusPanel extends JPanel {
             Image newCogImg = cogImg.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             newCogIcon = new ImageIcon(newCogImg);
         } catch (IOException|NullPointerException e) {
-            settings.setText("...");
+            settingsButton.setText("...");
         }
-        settings.setIcon(newCogIcon);
+        settingsButton.setIcon(newCogIcon);
 
-        buttons.add(settings, BorderLayout.EAST);
+        buttons.add(settingsButton, BorderLayout.EAST);
 
         try {
-            JButton openKimai = new JButton(Settings.getInstance().getKimaiUri());
+            openKimai = new JButton();
             openKimai.setForeground(Color.BLUE);
             openKimai.setBorder(null);
             openKimai.setOpaque(false);
@@ -45,7 +47,7 @@ public class StatusPanel extends JPanel {
             openKimai.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             openKimai.addActionListener(actionEvent -> {
                 try {
-                    openWebpage(new URL(Settings.getInstance().getKimaiUri()));
+                    openWebpage(new URL(this.settings.getKimaiUri()));
                 } catch (IOException e) {
                     statusBar.setText(e.getMessage());
                 }
@@ -65,12 +67,16 @@ public class StatusPanel extends JPanel {
         this.add(statusBar, BorderLayout.CENTER);
     }
 
+    public void setOpeKimaiUrl(String url) {
+        this.openKimai.setText(url);
+    }
+
     public void setText(String text) {
         this.statusBar.setText(text);
     }
 
     public void addConfigListener(ActionListener actionListener) {
-        settings.addActionListener(actionListener);
+        settingsButton.addActionListener(actionListener);
     }
 
 
