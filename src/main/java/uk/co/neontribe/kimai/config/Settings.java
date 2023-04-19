@@ -71,6 +71,7 @@ public class Settings {
         // Read in the YAML config file
         Yaml yaml = new Yaml();
         InputStream inputStream = Files.newInputStream(settingsFile.toPath());
+        System.out.println("Reading settings from " + settingsFile.toPath());
         Map<String, Object> data = yaml.load(inputStream);
 
         if (data == null) {
@@ -130,7 +131,9 @@ public class Settings {
         return kimaiUri;
     }
 
-    public void setKimaiUri(String kimaiUri) {this.kimaiUri = kimaiUri;}
+    public void setKimaiUri(String kimaiUri) {
+        this.kimaiUri = kimaiUri;
+    }
 
     public String getKimaiUsername() {
         return kimaiUsername;
@@ -176,14 +179,25 @@ public class Settings {
         this.lastAccessed = lastAccessed;
     }
 
-    public static void save(Settings settings) throws FileNotFoundException, SecurityException {
+    public static void saveAndReset() {
+        try {
+            Settings.saveAndReset(Settings.getInstance());
+            Settings.reset();
+        } catch (SecurityException | IOException e) {
+            e.printStackTrace();;
+        }
+    }
+
+
+    public static void saveAndReset(Settings settings) throws FileNotFoundException, SecurityException {
+        System.out.println("Saving: " + settings.getKimaiUri() + ", " + settings.getKimaiUsername());
         Map<String, Object> kimai = new HashMap<String, Object>();
         kimai.put("kimaiUri", settings.getKimaiUri());
         kimai.put("kimaiUsername", settings.getKimaiUsername());
         kimai.put("kimaiPassword", settings.getKimaiPassword());
         kimai.put("customers", settings.getCustomers());
 
-        // TODO refacor this into a nested array. I don't understand YAML serializer in Java well enough
+        // TODO refactor this into a nested array. I don't understand YAML serializer in Java well enough
         kimai.put("last-accessed-customer", settings.getLastAccessed().getCustomer());
         kimai.put("last-accessed-project", settings.getLastAccessed().getProject());
         kimai.put("last-accessed-activity", settings.getLastAccessed().getActivity());

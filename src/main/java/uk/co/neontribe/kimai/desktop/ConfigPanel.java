@@ -26,7 +26,7 @@ public class ConfigPanel extends JPanel implements ActionListener {
         JPanel gridRight = new JPanel(new GridLayout(0, 1, 5, 5));
         gridRight.add(uri = new JTextField(settings.getKimaiUri(), 30));
         gridRight.add(username = new JTextField(settings.getKimaiUsername(), 30));
-        gridRight.add(password = new JTextField(settings.getKimaiPassword(), 30));
+        gridRight.add(password = new JPasswordField("", 30));
         this.add(gridRight, BorderLayout.CENTER);
 
         JPanel gridLeft = new JPanel(new GridLayout(0, 1, 5, 5));
@@ -49,6 +49,8 @@ public class ConfigPanel extends JPanel implements ActionListener {
             configFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
             configFrame.pack();
             configFrame.setLocationRelativeTo(topWindow);
+            configFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            configFrame.setModal(true);
         }
         return configFrame;
     }

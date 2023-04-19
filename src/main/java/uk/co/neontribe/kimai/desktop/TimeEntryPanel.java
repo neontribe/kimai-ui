@@ -118,6 +118,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         this.add(actionPanel, c);
 
         statusPanel = new StatusPanel();
+        statusPanel.addConfigListener(actionEvent -> openConfigDialog());
         c.gridx = 0;
         c.gridy = 5;
         c.gridheight = 1;
@@ -128,22 +129,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         project.addListSelectionListener(listSelectionEvent -> updateActivityCombo());
         activity.addListSelectionListener(listSelectionEvent -> saveLastAccessedActivity());
 
-        try {
-            // If we have a last selected, then try and find it, and set it
-            int customerId = Settings.getInstance().getLastAccessed().getCustomer();
-            if (customerId >= 0) {
-                ListModel<Customer> model = customer.getModel();
-                for (int i=0; i < model.getSize(); i++) {
-                    if (model.getElementAt(i).getId() == customerId) {
-                        this.customer.setSelectedIndex(i);
-                        break;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();;
-        }
-
+        updateCustomerCombo();;
         updateProjectCombo();
     }
 
@@ -156,7 +142,27 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
         }
     }
 
+    private void updateCustomerCombo() {
+        System.out.println("updateCustomerCombo");
+        try {
+            // If we have a last selected, then try and find it, and set it
+            int customerId = Settings.getInstance().getLastAccessed().getCustomer();
+            if (customerId >= 0) {
+                ListModel<Customer> model = customer.getModel();
+                for (int i = 0; i < model.getSize(); i++) {
+                    if (model.getElementAt(i).getId() == customerId) {
+                        this.customer.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void updateProjectCombo() {
+        System.out.println("updateProjectCombo");
         Settings settings;
         try {
             settings = Settings.getInstance();
@@ -172,14 +178,14 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
             int projectId = Settings.getInstance().getLastAccessed().getProject();
             if (projectId >= 0) {
                 ListModel<Project> model = project.getModel();
-                for (int i=0; i < model.getSize(); i++) {
+                for (int i = 0; i < model.getSize(); i++) {
                     if (model.getElementAt(i).getId() == projectId) {
                         this.project.setSelectedIndex(i);
                         break;
                     }
                 }
             }
-            Settings.save(settings);
+            Settings.saveAndReset(settings);
         } catch (IOException e) {
             this._setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             throw new RuntimeException(e);
@@ -188,6 +194,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
     }
 
     private void updateActivityCombo() {
+        System.out.println("updateActivityCombo");
         Settings settings;
         try {
             settings = Settings.getInstance();
@@ -203,14 +210,14 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
             int activityId = Settings.getInstance().getLastAccessed().getActivity();
             if (activityId >= 0) {
                 ListModel<Activity> model = activity.getModel();
-                for (int i=0; i < model.getSize(); i++) {
+                for (int i = 0; i < model.getSize(); i++) {
                     if (model.getElementAt(i).getId() == activityId) {
                         this.activity.setSelectedIndex(i);
                         break;
                     }
                 }
             }
-            Settings.save(settings);
+            Settings.saveAndReset(settings);
         } catch (IOException e) {
             this._setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             throw new RuntimeException(e);
@@ -226,7 +233,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
             if (selectedActivity != null) {
                 settings.setLastAccessedActivity(selectedActivity);
             }
-            Settings.save(settings);
+            Settings.saveAndReset(settings);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -294,5 +301,15 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                 this.statusPanel.setText(e.getMessage());
             }
         }
+    }
+
+    private void openConfigDialog() {
+        try {
+            ConfigPanel.makeFrame(this, Settings.getInstance()).setVisible(true);
+        } catch (IOException e) {
+            ConfigPanel.makeFrame(this, new Settings()).setVisible(true);
+        }
+        Settings.saveAndReset();
+        updateCustomerCombo();
     }
 }

@@ -4,6 +4,7 @@ import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,12 +15,12 @@ import javax.imageio.ImageIO;
 public class StatusPanel extends JPanel {
 
     JTextField statusBar;
+    JButton settings = new JButton();
+
 
     public StatusPanel() {
-
         JPanel buttons = new JPanel(new BorderLayout(10, 0));
 
-        JButton settings = new JButton();
 
         ImageIcon newCogIcon = null;
         try {
@@ -32,7 +33,6 @@ public class StatusPanel extends JPanel {
         }
         settings.setIcon(newCogIcon);
 
-        settings.addActionListener(actionEvent -> openConfigDialog());
         buttons.add(settings, BorderLayout.EAST);
 
         try {
@@ -69,13 +69,10 @@ public class StatusPanel extends JPanel {
         this.statusBar.setText(text);
     }
 
-    private void openConfigDialog() {
-        try {
-            ConfigPanel.makeFrame(this, Settings.getInstance()).setVisible(true);
-        } catch (IOException e) {
-            ConfigPanel.makeFrame(this, new Settings()).setVisible(true);
-        }
+    public void addConfigListener(ActionListener actionListener) {
+        settings.addActionListener(actionListener);
     }
+
 
     public static void openWebpage(URL url) {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
