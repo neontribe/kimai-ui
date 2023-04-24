@@ -71,6 +71,10 @@ public class StatusPanel extends JPanel {
         this.openKimai.setText(url);
     }
 
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
     public void setText(String text) {
         this.statusBar.setText(text);
     }

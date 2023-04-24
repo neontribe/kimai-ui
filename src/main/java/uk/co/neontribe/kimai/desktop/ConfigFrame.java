@@ -1,5 +1,6 @@
 package uk.co.neontribe.kimai.desktop;
 
+import uk.co.neontribe.kimai.Main;
 import uk.co.neontribe.kimai.config.Settings;
 
 import javax.swing.*;
@@ -16,10 +17,12 @@ public class ConfigFrame extends JDialog implements ActionListener {
     private final JTextField uri;
     private final JTextField username;
     private final JTextField password;
-//    private final JTextField fontSize;
 
     public ConfigFrame(Settings settings) {
         this.settings = settings;
+        if (this.settings == null) {
+            this.settings = new Settings();
+        }
         this.setLayout(new BorderLayout(5, 5));
         this.setTitle("Settings");
 
@@ -30,14 +33,12 @@ public class ConfigFrame extends JDialog implements ActionListener {
         gridRight.add(uri = new JTextField(this.settings.getKimaiUri(), 30));
         gridRight.add(username = new JTextField(this.settings.getKimaiUsername(), 30));
         gridRight.add(password = new JPasswordField("", 30));
-//        gridRight.add(fontSize = new JTextField("", settings.getFontSize()));
         this.add(gridRight, BorderLayout.CENTER);
 
         JPanel gridLeft = new JPanel(new GridLayout(0, 1, 5, 5));
         gridLeft.add(new JLabel("Your Kimai Uri:"));
         gridLeft.add(new JLabel("Username:"));
         gridLeft.add(new JLabel("Password:"));
-//        gridLeft.add(new JLabel("Font size:"));
         this.add(gridLeft, BorderLayout.WEST);
 
         JButton save = new JButton("Save");
@@ -82,7 +83,6 @@ public class ConfigFrame extends JDialog implements ActionListener {
             if (this.password.getText().length() > 0) {
                 settings.setKimaiPassword(this.password.getText());
             }
-//            settings.setFontSize(Integer.parseInt(this.fontSize.getText()));
             configFrame.setVisible(false);
         } catch (Exception ex) {
             System.err.println("Unreachable");

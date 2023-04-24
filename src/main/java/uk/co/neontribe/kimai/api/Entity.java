@@ -27,7 +27,7 @@ public abstract class Entity {
     }
 
     public static HttpURLConnection makeHttpConnection(URL url, Settings settings) throws IOException {
-        System.out.println("makeHttpConnection: " + settings.getKimaiUsername() + ", " + settings.getKimaiPassword() + ", " + ", " + settings.getKimaiUri());
+        System.out.println("makeHttpConnection: " + settings.getKimaiUsername() + ", " + settings.getKimaiUri());
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestProperty("X-AUTH-USER", settings.getKimaiUsername());
         con.setRequestProperty("X-AUTH-TOKEN", settings.getKimaiPassword());

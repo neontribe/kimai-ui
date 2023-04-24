@@ -129,20 +129,19 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
 
         try {
             this.settings = Settings.load();
-
-            customer.addListSelectionListener(listSelectionEvent -> updateProjectCombo());
-            project.addListSelectionListener(listSelectionEvent -> updateActivityCombo());
-            activity.addListSelectionListener(listSelectionEvent -> saveLastAccessedActivity());
-
-            this.statusPanel.setOpeKimaiUrl(this.settings.getKimaiUri());
-
-            updateCustomerCombo();
-            updateProjectCombo();
         } catch (IOException | ConfigNotInitialisedException e) {
-            throw new RuntimeException(e);
+            this.openConfigDialog();
         }
 
-        Main.changeFont(this, new Font(Font.SANS_SERIF, Font.PLAIN, settings.getFontSize()));
+        customer.addListSelectionListener(listSelectionEvent -> updateProjectCombo());
+        project.addListSelectionListener(listSelectionEvent -> updateActivityCombo());
+        activity.addListSelectionListener(listSelectionEvent -> saveLastAccessedActivity());
+
+        this.statusPanel.setSettings(this.settings);
+        this.statusPanel.setOpeKimaiUrl(this.settings.getKimaiUri());
+
+        updateCustomerCombo();
+        updateProjectCombo();
     }
 
     private void _setCursor(Cursor cursor) {
@@ -170,8 +169,10 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                     }
                 }
             }
+            this.statusPanel.setText("");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            this.statusPanel.setText("Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -198,8 +199,10 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                 }
             }
             this.settings.save();
+            this.statusPanel.setText("");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            this.statusPanel.setText("Error: " + e.getMessage());
+            e.printStackTrace();
         }
         this._setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
@@ -227,8 +230,10 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
                 }
             }
             this.settings.save();
+            this.statusPanel.setText("");
         } catch (IOException e) {
-            this.openConfigDialog();
+            this.statusPanel.setText("Error: " + e.getMessage());
+            e.printStackTrace();
         }
         this._setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
@@ -274,13 +279,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
             cal.setTime(_begin);
             Date _end = new Date(cal.getTimeInMillis() + (60L * minutes * 1000));
 
-            TimeSheet timesheet = new TimeSheet(
-                    _notes,
-                    _begin,
-                    _end,
-                    _project,
-                    _activity,
-                    user);
+            TimeSheet timesheet = new TimeSheet(_notes, _begin, _end, _project, _activity, user);
 
             Component topLevelFrame = ConfigFrame.getParentFrame(this);
             if (topLevelFrame != null) {
@@ -294,6 +293,7 @@ public class TimeEntryPanel extends JPanel implements ActionListener {
             if (topLevelFrame != null) {
                 topLevelFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
+            this.statusPanel.setText("");
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getMessage() == null) {

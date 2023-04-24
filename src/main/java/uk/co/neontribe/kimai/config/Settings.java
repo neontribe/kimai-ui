@@ -82,11 +82,10 @@ public class Settings {
         return lastAccessed;
     }
 
-    public int getFontSize() {
-        return this.fontSize;
-    }
-
     public void setKimaiUri(String kimaiUri) {
+        if (kimaiUri.endsWith("/")) {
+            kimaiUri = kimaiUri.substring(0, kimaiUri.length() -1);
+        }
         if (!this.kimaiUri.equals(kimaiUri)) {
             this.kimaiUri = kimaiUri;
             this.dirty = true;
@@ -136,10 +135,6 @@ public class Settings {
             this.dirty = true;
         }
     }
-
-//    public void setFontSize(int fontSize) {
-//        this.fontSize = fontSize;
-//    }
 
     public boolean isDirty() {
         return this.dirty;

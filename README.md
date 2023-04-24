@@ -57,3 +57,5 @@ mvn clean compile assembly:single
 ```bash
 java -jar target/kimai-ui-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
+
+java -Dswing.aatext=true -Dswing.plaf.metal.controlFont=Tahoma -Dswing.plaf.metal.userFont=Tahoma 

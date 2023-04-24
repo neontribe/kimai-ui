@@ -27,11 +27,15 @@ public class Main {
      * @throws IOException                   Thrown if we can't read from the file system
      */
     public static void main(String[] args) throws IOException {
+//        System.setProperty("swing.plaf.metal.userFont", "Dialog-32");
+//        System.setProperty("swing.plaf.metal.systemFont", "Dialog-32");
+//        System.setProperty("swing.plaf.metal.controlFont", "Dialog-Bold-32");
+
         // Create a new application frame and show it.
         // UIManager.setLookAndFeel ("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         frame = new KimaiUiFrame();
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        // frame.setSize(800, 600);
+        // frame.setSize(1024, 768);
         frame.pack();
         frame.setVisible(true);
 
